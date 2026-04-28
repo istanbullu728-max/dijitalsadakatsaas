@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   LayoutDashboard, CreditCard, FileText, Phone, Crown,
   RefreshCw, Users, Stamp, Gift, TrendingUp, Download,
@@ -71,6 +72,7 @@ function CardPreview({ color, stamps, gift }: { color:string; stamps:number; gif
 
 /* ══════════ MAIN ══════════ */
 export default function AdminDashboard() {
+  const router = useRouter();
   const [section,    setSection]    = useState<Section>("overview");
   const [stats,      setStats]      = useState<Stats|null>(null);
   const [campaign,   setCampaign]   = useState<Campaign|null>(null);
@@ -78,6 +80,12 @@ export default function AdminDashboard() {
   const [logs,       setLogs]       = useState<LogEntry[]>([]);
   const [loading,    setLoading]    = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Auth guard
+  useEffect(() => {
+    const ok = localStorage.getItem("admin_auth") === "true" || document.cookie.includes("admin_auth=true");
+    if (!ok) router.replace("/login");
+  }, [router]);
   const [saving,     setSaving]     = useState(false);
   const [logPeriod,  setLogPeriod]  = useState<"today"|"week"|"all">("all");
   const [phoneSearch,setPhoneSearch]= useState("");
