@@ -1,4 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
+// No external uuid package — using native crypto.randomUUID() (Node 15+, all browsers)
+const randomUUID = () => crypto.randomUUID();
+
 
 // Types
 export interface Customer {
@@ -41,7 +43,7 @@ export const db = {
 
   createCustomer: (): Customer => {
     const newCustomer: Customer = {
-      id: uuidv4(),
+      id: randomUUID(),
       stamps: 0,
       lastStampAt: null,
       createdAt: Date.now(),
@@ -72,7 +74,7 @@ export const db = {
 
     // Log the transaction
     logs.push({
-      id: uuidv4(),
+      id: randomUUID(),
       customerId,
       timestamp: now,
       cashierId,
@@ -94,7 +96,7 @@ export const db = {
     customer.stamps -= campaign.requiredStamps;
 
     logs.push({
-      id: uuidv4(),
+      id: randomUUID(),
       customerId,
       timestamp: Date.now(),
       cashierId: 'system',
