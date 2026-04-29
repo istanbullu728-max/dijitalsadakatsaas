@@ -369,10 +369,10 @@ export default function AdminDashboard() {
 
                     <div className="form-group">
                       <label className="form-label">Damga Sayısı — {campaign.requiredStamps}</label>
-                      <input type="range" min={3} max={30} value={campaign.requiredStamps} className="stamp-slider"
+                      <input type="range" min={3} max={15} value={campaign.requiredStamps} className="stamp-slider"
                         onChange={e=>setCampaign(c=>c?{...c,requiredStamps:Number(e.target.value)}:null)}/>
                       <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.65rem",color:"#94A3B8"}}>
-                        <span>3</span><span>30</span>
+                        <span>3</span><span>15</span>
                       </div>
                     </div>
 
