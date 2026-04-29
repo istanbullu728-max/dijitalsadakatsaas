@@ -14,7 +14,7 @@ interface Stats {
   last7Days: { label: string; count: number }[];
   rewardsTotal: number; stampsTotal: number;
 }
-interface Campaign { requiredStamps: number; isActive: boolean; giftDescription: string; cardColor: string; }
+interface Campaign { requiredStamps: number; isActive: boolean; giftDescription: string; cardColor: string; businessName?: string; logo?: string; }
 interface Customer { id: string; stamps: number; lastStampAt: number | null; createdAt: number; phone?: string; }
 interface LogEntry  { id: string; customerId: string; timestamp: number; cashierId: string; action: "stamp"|"redeem"; }
 
@@ -53,10 +53,24 @@ function BarChart({ data }: { data:{label:string;count:number}[] }) {
 }
 
 /* ── Card Preview ── */
-function CardPreview({ color, stamps, gift }: { color:string; stamps:number; gift:string }) {
+function CardPreview({ color, stamps, gift, logo, businessName }: { color:string; stamps:number; gift:string; logo?:string; businessName?:string }) {
+  const name = businessName || 'İşletmem';
+  const initials = name.slice(0,2).toUpperCase();
   return (
     <div className="card-preview" style={{background:`linear-gradient(135deg, ${color}, ${color}cc)`}}>
-      <div className="card-preview-brand">Sadakat Kartı</div>
+      {/* Logo + Business Name row */}
+      <div style={{display:"flex",alignItems:"center",gap:"0.5rem",marginBottom:"0.75rem"}}>
+        <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(255,255,255,0.2)",border:"2px solid rgba(255,255,255,0.4)",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0}}>
+          {logo
+            ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+            : <span style={{fontSize:"0.7rem",fontWeight:800,color:"white"}}>{initials}</span>
+          }
+        </div>
+        <div>
+          <div style={{fontSize:"0.5rem",fontWeight:700,color:"rgba(255,255,255,0.6)",letterSpacing:"0.15em",textTransform:"uppercase"}}>Sadakat Kartı</div>
+          <div style={{fontSize:"0.75rem",fontWeight:800,color:"white"}}>{name}</div>
+        </div>
+      </div>
       <div className="card-preview-title">{gift || "Hediye Seç"}</div>
       <div className="card-preview-stamps">
         {Array.from({length: Math.min(stamps,12)}).map((_,i)=>(
@@ -348,6 +362,12 @@ export default function AdminDashboard() {
                   {/* Form */}
                   <div>
                     <div className="form-group">
+                      <label className="form-label">İşLETME ADI</label>
+                      <input className="form-input" placeholder="Kafe Adı, Salon Adı..." value={campaign.businessName||''}
+                        onChange={e=>setCampaign(c=>c?{...c,businessName:e.target.value}:null)}/>
+                    </div>
+
+                    <div className="form-group">
                       <label className="form-label">Damga Sayısı — {campaign.requiredStamps}</label>
                       <input type="range" min={3} max={30} value={campaign.requiredStamps} className="stamp-slider"
                         onChange={e=>setCampaign(c=>c?{...c,requiredStamps:Number(e.target.value)}:null)}/>
@@ -381,8 +401,40 @@ export default function AdminDashboard() {
                       </div>
                     </div>
 
+                    {/* LOGO UPLOAD */}
+                    <div className="form-group">
+                      <label className="form-label">İşletme Logosu</label>
+                      <div style={{display:"flex",alignItems:"center",gap:"0.875rem",background:"#F8FAFC",border:"1.5px dashed #CBD5E1",borderRadius:12,padding:"0.875rem"}}>
+                        {/* Preview circle */}
+                        <div style={{width:52,height:52,borderRadius:"50%",background:campaign.cardColor,border:"2px solid #E2E8F0",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0,boxShadow:"0 2px 8px rgba(0,0,0,0.1)"}}>
+                          {campaign.logo
+                            ? <img src={campaign.logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                            : <span style={{fontSize:"1rem",fontWeight:800,color:"white"}}>{(campaign.businessName||'İ').slice(0,2).toUpperCase()}</span>
+                          }
+                        </div>
+                        <div style={{flex:1}}>
+                          <label htmlFor="logo-upload" style={{display:"inline-flex",alignItems:"center",gap:"0.375rem",padding:"0.5rem 1rem",borderRadius:8,background:"#6366F1",color:"white",fontSize:"0.8rem",fontWeight:700,cursor:"pointer"}}>
+                            📷 Logo Yükle
+                          </label>
+                          <input id="logo-upload" type="file" accept="image/*" style={{display:"none"}}
+                            onChange={e=>{
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              const reader = new FileReader();
+                              reader.onload = ev => setCampaign(c=>c?{...c,logo:ev.target?.result as string}:null);
+                              reader.readAsDataURL(file);
+                            }}/>
+                          {campaign.logo && (
+                            <button onClick={()=>setCampaign(c=>c?{...c,logo:''}:null)}
+                              style={{marginLeft:"0.5rem",padding:"0.5rem 0.75rem",borderRadius:8,border:"1px solid #EF4444",background:"transparent",color:"#EF4444",fontSize:"0.75rem",fontWeight:700,cursor:"pointer"}}>Kaldır</button>
+                          )}
+                          <div style={{fontSize:"0.7rem",color:"#94A3B8",marginTop:"0.375rem"}}>PNG, JPG, SVG • Maks. 2MB</div>
+                        </div>
+                      </div>
+                    </div>
+
                     <button className="save-btn" onClick={saveCampaign} disabled={saving}>
-                      {saving?"Kaydediliyor...":"💾 Kartı Kaydet"}
+                      {saving?"Kaydediliyor...":"💾 Kartı Yayınla"}
                     </button>
                   </div>
 
@@ -390,7 +442,7 @@ export default function AdminDashboard() {
                   <div>
                     <div className="form-label" style={{marginBottom:"0.75rem"}}>Canlı Önizleme</div>
                     <div className="card-preview-wrapper">
-                      <CardPreview color={campaign.cardColor} stamps={campaign.requiredStamps} gift={campaign.giftDescription}/>
+                      <CardPreview color={campaign.cardColor} stamps={campaign.requiredStamps} gift={campaign.giftDescription} logo={campaign.logo} businessName={campaign.businessName}/>
                       <div style={{fontSize:"0.72rem",color:"#94A3B8",textAlign:"center"}}>
                         {campaign.requiredStamps} damga → {campaign.giftDescription}
                       </div>

@@ -10,6 +10,8 @@ interface CustomerData {
     requiredStamps: number;
     giftDescription: string;
     cardColor: string;
+    businessName?: string;
+    logo?: string;
   };
 }
 
@@ -124,6 +126,8 @@ export default function CustomerCard({
             requiredStamps: json.campaign.requiredStamps,
             giftDescription: json.campaign.giftDescription ?? "1 Bedava Kahve",
             cardColor: json.campaign.cardColor ?? "#6366F1",
+            businessName: json.campaign.businessName ?? "",
+            logo: json.campaign.logo ?? "",
           },
         });
       }
@@ -157,6 +161,8 @@ export default function CustomerCard({
   const required = data?.campaign?.requiredStamps ?? 10;
   const gift = data?.campaign?.giftDescription ?? "1 Bedava Kahve";
   const cardColor = data?.campaign?.cardColor ?? "#6366F1";
+  const businessName = data?.campaign?.businessName || "İşletmem";
+  const logo = data?.campaign?.logo || "";
   const isReady = stamps >= required;
   const progress = Math.min(stamps / required, 1);
 
@@ -164,6 +170,7 @@ export default function CustomerCard({
   const gradientTo = darken(cardColor, 45);
   const accent = lighten(cardColor, 60);
   const shortId = id.split("-")[0].toUpperCase();
+  const initials = businessName.slice(0,2).toUpperCase();
 
   return (
     <div style={styles.shell}>
@@ -194,9 +201,18 @@ export default function CustomerCard({
 
         {/* ── Card Header ── */}
         <div style={styles.cardHeader}>
-          <div>
-            <div style={styles.brandLabel}>SADAKAT KARTI</div>
-            <div style={styles.brandName}>Coffee Co.</div>
+          <div style={{display:"flex",alignItems:"center",gap:"0.75rem"}}>
+            {/* Logo circle */}
+            <div style={{width:44,height:44,borderRadius:"50%",background:"rgba(255,255,255,0.18)",border:"2px solid rgba(255,255,255,0.35)",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0,boxShadow:"0 2px 12px rgba(0,0,0,0.18)"}}>
+              {logo
+                ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                : <span style={{fontSize:"0.85rem",fontWeight:800,color:"white",letterSpacing:"-0.02em"}}>{initials}</span>
+              }
+            </div>
+            <div>
+              <div style={styles.brandLabel}>SADAKAT KARTI</div>
+              <div style={styles.brandName}>{businessName}</div>
+            </div>
           </div>
           <div
             style={{

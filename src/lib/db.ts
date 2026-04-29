@@ -24,6 +24,8 @@ export interface Campaign {
   isActive: boolean;
   giftDescription: string; // e.g. "1 Bedava Kahve"
   cardColor: string;        // hex color e.g. "#6366F1"
+  businessName?: string;  // işletme adı
+  logo?: string;          // base64 data URL
 }
 
 // In-memory Database
@@ -35,6 +37,8 @@ let campaign: Campaign = {
   isActive: true,
   giftDescription: '1 Bedava Kahve',
   cardColor: '#6366F1',
+  businessName: 'İşletmem',
+  logo: '',
 };
 
 export const db = {
