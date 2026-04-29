@@ -744,3 +744,63 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ========================================================= */
+/* MOBILE RESPONSIVE — Admin Panel                           */
+/* ========================================================= */
+.admin-hamburger {
+  display: none; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 9px;
+  border: 1px solid #E2E8F0; background: transparent;
+  color: #64748B; cursor: pointer; margin-right: 0.75rem; flex-shrink: 0;
+}
+.sb-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 99; backdrop-filter: blur(2px);
+}
+@media (max-width: 768px) {
+  .admin-hamburger { display: flex; }
+  .admin-sidebar { transform: translateX(-100%); transition: transform 0.28s cubic-bezier(0.16,1,0.3,1); z-index: 200; }
+  .admin-sidebar.sidebar-open { transform: translateX(0); }
+  .sb-overlay { display: block; }
+  .admin-main { margin-left: 0 !important; }
+  .admin-topbar { padding: 0 1rem; }
+  .admin-page { padding: 1rem; }
+  .kpi-grid { grid-template-columns: repeat(2,1fr) !important; gap: 0.75rem; }
+  .content-grid-2, .content-grid-3 { grid-template-columns: 1fr !important; }
+  .card-creator-grid { grid-template-columns: 1fr !important; }
+  .admin-topbar-title { font-size: 0.95rem; }
+  .admin-topbar-sub { display: none; }
+  .data-table th:nth-child(n+4), .data-table td:nth-child(n+4) { display: none; }
+  .log-filters { flex-wrap: wrap; }
+}
+@media (max-width: 480px) {
+  .kpi-grid { grid-template-columns: 1fr !important; }
+  .kpi-value { font-size: 1.75rem; }
+}
+
+/* ========================================================= */
+/* MOBILE RESPONSIVE — Landing Page CSS Classes              */
+/* ========================================================= */
+.landing-nav-links { display: flex; align-items: center; gap: 1.25rem; }
+.landing-hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+.landing-3col { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; text-align: left; }
+.landing-4col { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; text-align: center; }
+.landing-roi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+.landing-how-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+
+@media (max-width: 860px) {
+  .landing-hero-grid { grid-template-columns: 1fr !important; gap: 2rem; text-align: center; }
+  .landing-phone-hide { display: none; }
+  .landing-nav-links { display: none !important; }
+  .landing-ctas { justify-content: center !important; }
+  .landing-trust-items { justify-content: center !important; }
+  .landing-3col { grid-template-columns: 1fr !important; }
+  .landing-4col { grid-template-columns: repeat(2,1fr) !important; }
+  .landing-roi-grid { grid-template-columns: 1fr !important; }
+  .landing-how-grid { grid-template-columns: repeat(2,1fr) !important; }
+}
+@media (max-width: 480px) {
+  .landing-4col { grid-template-columns: repeat(2,1fr) !important; }
+  .loyalty-card { padding: 2rem 1.25rem; border-radius: 1.5rem; }
+  .stamp-item { width: 40px; height: 40px; }
+}
