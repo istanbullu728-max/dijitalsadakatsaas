@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, use, useRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
 /* ─── Types ─── */
 interface CustomerData {
   stamps: number;
+  name?: string;
   campaign: {
     requiredStamps: number;
     giftDescription: string;
@@ -114,14 +115,24 @@ export default function CustomerCard({
   const [data, setData] = useState<CustomerData | null>(null);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [showAnimation, setShowAnimation] = useState(false);
+  const prevStampsRef = useRef<number | null>(null);
 
   const fetchCustomer = async () => {
     try {
       const res = await fetch(`/api/customer/${id}`);
       const json = await res.json();
       if (json.success) {
+        const newStamps = json.customer.stamps;
+        if (prevStampsRef.current !== null && newStamps > prevStampsRef.current) {
+          setShowAnimation(true);
+          setTimeout(() => setShowAnimation(false), 3000);
+        }
+        prevStampsRef.current = newStamps; // Update ref
+
         setData({
-          stamps: json.customer.stamps,
+          stamps: newStamps,
+          name: json.customer.name,
           campaign: {
             requiredStamps: json.campaign.requiredStamps,
             giftDescription: json.campaign.giftDescription ?? "1 Bedava Kahve",
@@ -174,6 +185,29 @@ export default function CustomerCard({
 
   return (
     <div style={styles.shell}>
+      {/* ── Celebration Animation Overlay ── */}
+      {showAnimation && (
+        <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:999,display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <div style={{animation:"popIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards"}}>
+            <div style={{fontSize:"4rem",filter:"drop-shadow(0 10px 20px rgba(0,0,0,0.2))"}}>🎉</div>
+          </div>
+          {/* Confetti particles */}
+          {Array.from({length:12}).map((_,i)=>(
+            <div key={i} style={{
+              position:"absolute", width:10, height:10, background: ["#FFD700","#FF6B6B","#4ECDC4","#45B7D1"][i%4],
+              borderRadius: i%2===0?"50%":"2px", top:"50%", left:"50%",
+              animation:`confettiFly ${0.6 + Math.random()*0.4}s ease-out forwards`,
+              transformOrigin:"center",
+              transform:`rotate(${Math.random()*360}deg) translateY(-${100+Math.random()*150}px)`
+            }}/>
+          ))}
+          <style>{`
+            @keyframes confettiFly { 0% { opacity: 1; transform: translate(0,0) scale(0); } 100% { opacity: 0; transform: translate(${(Math.random()-0.5)*300}px, ${(Math.random()-0.5)*300}px) scale(1.5) rotate(360deg); } }
+            @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+          `}</style>
+        </div>
+      )}
+
       {/* ── Ambient background glow ── */}
       <div
         style={{
@@ -279,9 +313,9 @@ export default function CustomerCard({
             <div style={styles.footerLabel}>DAMGA</div>
             <div style={styles.footerValue}>{stamps} / {required}</div>
           </div>
-          <div style={styles.cardFooterRight}>
-            <div style={styles.footerLabel}>MÜŞTERİ NO</div>
-            <div style={styles.footerValue}>{shortId}</div>
+          <div style={styles.cardFooterRight} style={{textAlign: "right"}}>
+            <div style={styles.footerLabel}>{data?.name ? "MÜŞTERİ" : "MÜŞTERİ NO"}</div>
+            <div style={styles.footerValue} style={{textTransform: "uppercase"}}>{data?.name || shortId}</div>
           </div>
         </div>
 

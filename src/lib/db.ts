@@ -9,6 +9,7 @@ export interface Customer {
   lastStampAt: number | null; // Timestamp
   createdAt: number;
   phone?: string;
+  name?: string;
 }
 
 export interface StampLog {
@@ -45,12 +46,13 @@ export const db = {
   getCustomers: () => customers,
   getCustomer: (id: string) => customers.find(c => c.id === id) || null,
 
-  createCustomer: (): Customer => {
+  createCustomer: (name?: string): Customer => {
     const newCustomer: Customer = {
       id: randomUUID(),
       stamps: 0,
       lastStampAt: null,
       createdAt: Date.now(),
+      name,
     };
     customers.push(newCustomer);
     return newCustomer;

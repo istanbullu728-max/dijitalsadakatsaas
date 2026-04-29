@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 import {
   LayoutDashboard, CreditCard, FileText, Phone, Crown,
   RefreshCw, Users, Stamp, Gift, TrendingUp, Download,
-  Search, CheckCircle, Plus, Star
+  Search, CheckCircle, Plus, Star, Smartphone
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 /* ── Types ── */
 interface Stats {
@@ -18,16 +19,16 @@ interface Campaign { requiredStamps: number; isActive: boolean; giftDescription:
 interface Customer { id: string; stamps: number; lastStampAt: number | null; createdAt: number; phone?: string; }
 interface LogEntry  { id: string; customerId: string; timestamp: number; cashierId: string; action: "stamp"|"redeem"; }
 
-type Section = "overview" | "card" | "logs" | "phones" | "preview" | "cashier";
+type Section = "overview" | "card" | "logs" | "phones" | "stand" | "preview" | "cashier";
 
 const COLORS = ["#6366F1","#8B5CF6","#EC4899","#F59E0B","#10B981","#0EA5E9","#EF4444","#0F172A"];
 const GIFTS  = ["1 Bedava Kahve","1 Bedava Tatlı","İndirim Kuponu","Sürpriz Hediye","1 Bedava İçecek","Ücretsiz Menü"];
 const SECTIONS: { id: Section; label: string; icon: React.ReactNode }[] = [
   { id:"overview", label:"Panel Özeti",         icon:<LayoutDashboard size={18}/> },
   { id:"card",     label:"Sadakat Kartı",        icon:<CreditCard size={18}/> },
+  { id:"stand",    label:"Masa QR Standı",       icon:<Smartphone size={18}/> },
   { id:"logs",     label:"Log Kayıtları",        icon:<FileText size={18}/> },
   { id:"phones",   label:"Telefon Numaraları",   icon:<Phone size={18}/> },
-  { id:"preview",  label:"Müşteri Kartı",        icon:<Users size={18}/> },
   { id:"cashier",  label:"Kasiyer Paneli",       icon:<Star size={18}/> },
 ];
 
@@ -166,6 +167,7 @@ export default function AdminDashboard() {
   const topbar: Record<Section,{title:string;sub:string}> = {
     overview:{ title:"Panel Özeti",         sub:"İşletmenizin anlık performansı" },
     card:    { title:"Sadakat Kartı Oluştur", sub:"Kart tasarımı ve kampanya ayarları" },
+    stand:   { title:"Masa QR Standı",        sub:"Müşterilerin kayıt olacağı QR kod" },
     logs:    { title:"Log Kayıtları",         sub:"Tüm damga ve ödül işlemleri" },
     phones:  { title:"Telefon Numaraları",    sub:"Kart sahibi telefon yönetimi" },
     preview: { title:"Müşteri Kartı",         sub:"Müşteri kartı önizlemesi ve QR linki" },
@@ -435,9 +437,9 @@ export default function AdminDashboard() {
                   {/* Preview */}
                   <div>
                     <div className="form-label" style={{marginBottom:"0.75rem"}}>Canlı Önizleme</div>
-                    <div className="card-preview-wrapper">
+                    <div className="card-preview-wrapper" style={{background: "transparent", padding: 0}}>
                       <CardPreview color={campaign.cardColor} stamps={campaign.requiredStamps} gift={campaign.giftDescription} logo={campaign.logo} businessName={campaign.businessName}/>
-                      <div style={{fontSize:"0.72rem",color:"#94A3B8",textAlign:"center"}}>
+                      <div style={{fontSize:"0.72rem",color:"#94A3B8",textAlign:"center",marginTop:"1rem"}}>
                         {campaign.requiredStamps} damga → {campaign.giftDescription}
                       </div>
                     </div>
@@ -560,6 +562,38 @@ export default function AdminDashboard() {
                     </table>
                   </div>
               }
+            </div>
+          </div>
+        )}
+
+        {/* ════ STAND QR ════ */}
+        {section==="stand" && (
+          <div className="admin-page">
+            <div style={{maxWidth:600,margin:"0 auto"}}>
+              <div className="panel-card" style={{textAlign:"center",padding:"3rem 2rem"}}>
+                <div style={{width:64,height:64,background:"rgba(99,102,241,0.1)",color:"#6366F1",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 1.5rem"}}>
+                  <Smartphone size={32}/>
+                </div>
+                <h2 style={{fontSize:"1.5rem",fontWeight:800,marginBottom:"0.5rem",color:"#0F172A"}}>Masa / Kasa QR Standı</h2>
+                <p style={{color:"#64748B",fontSize:"0.95rem",lineHeight:1.6,marginBottom:"2rem"}}>
+                  Müşterileriniz bu QR kodu telefonlarının kamerasıyla okutarak kendi adlarıyla anında sadakat kartlarını oluşturabilirler. Uygulama indirmelerine gerek yoktur.
+                </p>
+                
+                <div style={{background:"white",padding:"2rem",borderRadius:"24px",border:"2px solid #E2E8F0",display:"inline-block",marginBottom:"2rem",boxShadow:"0 10px 30px rgba(0,0,0,0.05)"}}>
+                  <QRCodeSVG 
+                    value={`${typeof window !== 'undefined' ? window.location.origin : ''}/join`}
+                    size={200}
+                    level="H"
+                    fgColor="#0F172A"
+                  />
+                  <div style={{fontSize:"0.8rem",fontWeight:700,marginTop:"1rem",letterSpacing:"0.15em",color:"#94A3B8"}}>KAMERANIZI YAKLAŞTIRIN</div>
+                </div>
+
+                <div>
+                  <a href="/join" target="_blank" className="btn btn-primary" style={{width:"100%",marginBottom:"1rem"}}>Müşteri Gözünden Test Et →</a>
+                  <p style={{fontSize:"0.75rem",color:"#94A3B8"}}>Bu ekranı çıktı alarak masalarınıza veya kasanıza yerleştirebilirsiniz.</p>
+                </div>
+              </div>
             </div>
           </div>
         )}
