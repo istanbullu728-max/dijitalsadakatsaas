@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   LayoutDashboard, CreditCard, FileText, Phone, Crown,
@@ -53,34 +53,128 @@ function BarChart({ data }: { data:{label:string;count:number}[] }) {
   );
 }
 
-/* ── Card Preview ── */
+/* ── 3D Card Preview ── */
 function CardPreview({ color, stamps, gift, logo, businessName }: { color:string; stamps:number; gift:string; logo?:string; businessName?:string }) {
   const name = businessName || 'İşletmem';
   const initials = name.slice(0,2).toUpperCase();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const card = cardRef.current;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const rotateX = ((y - centerY) / centerY) * -12;
+    const rotateY = ((x - centerX) / centerX) * 12;
+    
+    setRotate({ x: rotateX, y: rotateY });
+    
+    const glareX = (x / rect.width) * 100;
+    const glareY = (y / rect.height) * 100;
+    setGlare({ x: glareX, y: glareY, opacity: 0.25 });
+  };
+
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setRotate({ x: 0, y: 0 });
+    setGlare({ opacity: 0, x: 50, y: 50 });
+  };
+
   return (
-    <div className="card-preview" style={{background:`linear-gradient(135deg, ${color}, ${color}cc)`}}>
-      {/* Logo + Business Name row */}
-      <div style={{display:"flex",alignItems:"center",gap:"0.5rem",marginBottom:"0.75rem"}}>
-        <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(255,255,255,0.2)",border:"2px solid rgba(255,255,255,0.4)",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0}}>
-          {logo
-            ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
-            : <span style={{fontSize:"0.7rem",fontWeight:800,color:"white"}}>{initials}</span>
-          }
-        </div>
-        <div>
-          <div style={{fontSize:"0.5rem",fontWeight:700,color:"rgba(255,255,255,0.6)",letterSpacing:"0.15em",textTransform:"uppercase"}}>Sadakat Kartı</div>
-          <div style={{fontSize:"0.75rem",fontWeight:800,color:"white"}}>{name}</div>
-        </div>
-      </div>
-      <div className="card-preview-title">{gift || "Hediye Seç"}</div>
-      <div className="card-preview-stamps">
-        {Array.from({length: Math.min(stamps,12)}).map((_,i)=>(
-          <div key={i} className={`card-preview-stamp ${i<3?"filled":""}`}>
-            {i<3 && <Star size={12} color={color} fill={color}/>}
+    <div style={{ perspective: "1000px", padding: "1.5rem 1rem", width: "100%", display: "flex", justifyContent: "center" }}>
+      <div 
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          width: "100%", maxWidth: "340px", aspectRatio: "1.586 / 1",
+          borderRadius: "20px", position: "relative",
+          transformStyle: "preserve-3d",
+          transform: `rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale(${isHovered ? 1.02 : 1})`,
+          transition: isHovered ? "transform 0.1s ease-out" : "transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
+          background: `linear-gradient(135deg, ${color}, #1A1A24)`,
+          boxShadow: isHovered 
+            ? "0 30px 60px -12px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.3)"
+            : "0 20px 40px -10px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.2)",
+          overflow: "hidden", cursor: "pointer",
+          display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "1.25rem",
+          color: "white"
+        }}
+      >
+        {/* Glare Effect */}
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2,
+          background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,${glare.opacity}), transparent 60%)`,
+          transition: isHovered ? "none" : "opacity 0.5s ease"
+        }} />
+
+        {/* Noise Texture */}
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1, opacity: 0.05,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+        }} />
+
+        {/* Content (Z-index ensures it's above glare and noise) */}
+        <div style={{ position: "relative", zIndex: 3, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+          {/* Brand Row */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div style={{
+              width: 38, height: 38, borderRadius: "50%", background: "rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center",
+              overflow: "hidden", flexShrink: 0, backdropFilter: "blur(4px)"
+            }}>
+              {logo
+                ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                : <span style={{fontSize:"0.8rem",fontWeight:800,color:"white"}}>{initials}</span>
+              }
+            </div>
+            <div style={{ transform: "translateZ(10px)" }}>
+              <div style={{fontSize:"0.6rem",fontWeight:600,color:"rgba(255,255,255,0.6)",letterSpacing:"0.1em",textTransform:"uppercase"}}>Sadakat Cüzdanı</div>
+              <div style={{fontSize:"0.85rem",fontWeight:800,letterSpacing:"-0.02em"}}>{name}</div>
+            </div>
           </div>
-        ))}
+          
+          {/* NFC/Contactless Icon */}
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.7 }}>
+            <path d="M4 8.5C6.5 6 9.5 5 12 5C14.5 5 17.5 6 20 8.5M6 11.5C8 10 10 9 12 9C14 9 16 10 18 11.5M8 14.5C9.5 13.5 10.5 13 12 13C13.5 13 14.5 13.5 16 14.5M10 17.5C10.5 17 11 17 12 17C13 17 13.5 17 14 17.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+
+        {/* Center: Customer Name (Mock) */}
+        <div style={{ position: "relative", zIndex: 3, transform: "translateZ(20px)", marginTop: "1rem" }}>
+          <div style={{fontSize:"0.65rem",color:"rgba(255,255,255,0.6)",fontWeight:600,letterSpacing:"0.05em"}}>MÜŞTERİ</div>
+          <div style={{fontSize:"1.4rem",fontWeight:800,letterSpacing:"-0.03em",textShadow:"0 2px 4px rgba(0,0,0,0.3)"}}>Örnek İsim</div>
+        </div>
+
+        {/* Footer Row */}
+        <div style={{ position: "relative", zIndex: 3, display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginTop: "1rem" }}>
+          <div style={{ transform: "translateZ(15px)" }}>
+            <div style={{fontSize:"0.65rem",color:"rgba(255,255,255,0.6)",fontWeight:600,letterSpacing:"0.05em",marginBottom:"0.2rem"}}>DURUM</div>
+            <div style={{display:"flex",alignItems:"baseline",gap:"0.3rem"}}>
+              <span style={{fontSize:"1.25rem",fontWeight:800}}>{stamps}</span>
+              <span style={{fontSize:"0.8rem",fontWeight:600,color:"rgba(255,255,255,0.8)"}}>/ {stamps} DAMGA</span>
+            </div>
+          </div>
+          
+          {/* Mini QR */}
+          <div style={{
+            background: "rgba(255,255,255,0.9)", padding: "4px", borderRadius: "8px", 
+            transform: "translateZ(10px)", boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+          }}>
+            <QRCodeSVG value="preview" size={40} level="L" fgColor="#1A1A24" bgColor="transparent" />
+          </div>
+        </div>
       </div>
-      <div className="card-preview-footer">{stamps} damgada {gift}</div>
     </div>
   );
 }

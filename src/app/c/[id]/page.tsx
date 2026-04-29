@@ -117,6 +117,9 @@ export default function CustomerCard({
   const [mounted, setMounted] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const prevStampsRef = useRef<number | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
 
   const fetchCustomer = async () => {
     try {
@@ -175,13 +178,46 @@ export default function CustomerCard({
   const businessName = data?.campaign?.businessName || "İşletmem";
   const logo = data?.campaign?.logo || "";
   const isReady = stamps >= required;
-  const progress = Math.min(stamps / required, 1);
 
   const gradientFrom = cardColor;
   const gradientTo = darken(cardColor, 45);
-  const accent = lighten(cardColor, 60);
   const shortId = id.split("-")[0].toUpperCase();
   const initials = businessName.slice(0,2).toUpperCase();
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const card = cardRef.current;
+    const rect = card.getBoundingClientRect();
+    
+    let clientX, clientY;
+    if ('touches' in e) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const rotateX = ((y - centerY) / centerY) * -12;
+    const rotateY = ((x - centerX) / centerX) * 12;
+    
+    setRotate({ x: rotateX, y: rotateY });
+    
+    const glareX = (x / rect.width) * 100;
+    const glareY = (y / rect.height) * 100;
+    setGlare({ x: glareX, y: glareY, opacity: 0.25 });
+  };
+
+  const handleMouseLeave = () => {
+    setRotate({ x: 0, y: 0 });
+    setGlare({ opacity: 0, x: 50, y: 50 });
+  };
 
   return (
     <div style={styles.shell}>
@@ -208,138 +244,111 @@ export default function CustomerCard({
         </div>
       )}
 
-      {/* ── Ambient background glow ── */}
-      <div
-        style={{
-          ...styles.ambientGlow,
-          background: `radial-gradient(ellipse 70% 60% at 50% 30%, ${cardColor}55 0%, transparent 70%)`,
-        }}
-      />
+      {/* ── Background glow ── */}
+      <div style={{ ...styles.ambientGlow, background: `radial-gradient(ellipse 70% 60% at 50% 30%, ${cardColor}55 0%, transparent 70%)` }} />
 
-      {/* ══════════════════════════════════
-          CARD
-      ══════════════════════════════════ */}
-      <div
-        style={{
-          ...styles.card,
-          background: `linear-gradient(145deg, ${gradientFrom} 0%, ${gradientTo} 100%)`,
-          opacity: mounted ? 1 : 0,
-          transform: mounted ? "translateY(0) scale(1)" : "translateY(32px) scale(0.96)",
-        }}
-      >
-        {/* Glossy overlay */}
-        <div style={styles.gloss} />
+      <div style={{ perspective: "1000px", width: "100%", maxWidth: "380px", margin: "0 auto", zIndex: 10 }}>
+        <div 
+          ref={cardRef}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          onTouchMove={handleMouseMove}
+          onTouchEnd={handleMouseLeave}
+          style={{
+            width: "100%", aspectRatio: "0.63", // vertical card like Apple Wallet
+            borderRadius: "24px", position: "relative",
+            transformStyle: "preserve-3d",
+            transform: mounted ? `translateY(0) scale(1) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)` : `translateY(40px) scale(0.95)`,
+            transition: mounted && rotate.x === 0 ? "transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)" : "transform 0.1s ease-out",
+            background: `linear-gradient(145deg, ${gradientFrom}, #0F0F13)`,
+            boxShadow: rotate.x !== 0 
+              ? "0 40px 80px -20px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.4)"
+              : "0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2)",
+            overflow: "hidden", display: "flex", flexDirection: "column",
+            color: "white"
+          }}
+        >
+          {/* Glare Effect */}
+          <div style={{
+            position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2,
+            background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,${glare.opacity}), transparent 60%)`,
+            transition: rotate.x === 0 ? "opacity 0.5s ease" : "none"
+          }} />
 
-        {/* Noise texture overlay */}
-        <div style={styles.noise} />
+          {/* Noise Texture */}
+          <div style={{
+            position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1, opacity: 0.05, mixBlendMode: "overlay",
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`
+          }} />
 
-        {/* ── Card Header ── */}
-        <div style={styles.cardHeader}>
-          <div style={{display:"flex",alignItems:"center",gap:"0.75rem"}}>
-            {/* Logo circle */}
-            <div style={{width:44,height:44,borderRadius:"50%",background:"rgba(255,255,255,0.18)",border:"2px solid rgba(255,255,255,0.35)",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0,boxShadow:"0 2px 12px rgba(0,0,0,0.18)"}}>
-              {logo
-                ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
-                : <span style={{fontSize:"0.85rem",fontWeight:800,color:"white",letterSpacing:"-0.02em"}}>{initials}</span>
-              }
+          {/* ── CARD HEADER ── */}
+          <div style={{ position: "relative", zIndex: 3, padding: "1.75rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", transform: "translateZ(10px)" }}>
+              <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", backdropFilter: "blur(8px)" }}>
+                {logo ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <span style={{fontSize:"1rem",fontWeight:800}}>{initials}</span>}
+              </div>
+              <div>
+                <div style={{fontSize:"0.6rem",fontWeight:600,color:"rgba(255,255,255,0.6)",letterSpacing:"0.15em",marginBottom:"0.1rem"}}>SADAKAT CÜZDANI</div>
+                <div style={{fontSize:"1rem",fontWeight:800}}>{businessName}</div>
+              </div>
             </div>
-            <div>
-              <div style={styles.brandLabel}>SADAKAT KARTI</div>
-              <div style={styles.brandName}>{businessName}</div>
-            </div>
-          </div>
-          <div
-            style={{
-              ...styles.chipIcon,
-              background: `rgba(255,255,255,0.15)`,
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            {/* NFC / chip icon */}
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <rect x="5" y="5" width="14" height="14" rx="2" stroke="rgba(255,255,255,0.8)" strokeWidth="1.5"/>
-              <rect x="9" y="9" width="6" height="6" rx="1" stroke="rgba(255,255,255,0.8)" strokeWidth="1.5"/>
-              <line x1="9" y1="5" x2="9" y2="2" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-              <line x1="15" y1="5" x2="15" y2="2" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-              <line x1="9" y1="19" x2="9" y2="22" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-              <line x1="15" y1="19" x2="15" y2="22" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-              <line x1="19" y1="9" x2="22" y2="9" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-              <line x1="19" y1="15" x2="22" y2="15" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-              <line x1="5" y1="9" x2="2" y2="9" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-              <line x1="5" y1="15" x2="2" y2="15" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.8, transform: "translateZ(15px)" }}>
+              <path d="M4 8.5C6.5 6 9.5 5 12 5C14.5 5 17.5 6 20 8.5M6 11.5C8 10 10 9 12 9C14 9 16 10 18 11.5M8 14.5C9.5 13.5 10.5 13 12 13C13.5 13 14.5 13.5 16 14.5M10 17.5C10.5 17 11 17 12 17C13 17 13.5 17 14 17.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
             </svg>
           </div>
-        </div>
 
-        {/* ── Reward status ── */}
-        {isReady ? (
-          <div style={styles.rewardReady}>
-            <span style={styles.rewardReadyDot} />
-            HEDİYE HAZIR — {gift.toUpperCase()}
+          {/* ── CARD BODY ── */}
+          <div style={{ position: "relative", zIndex: 3, flex: 1, padding: "0 1.5rem", display: "flex", flexDirection: "column", justifyContent: "center", transform: "translateZ(20px)" }}>
+            <div style={{fontSize:"0.75rem",color:"rgba(255,255,255,0.6)",fontWeight:600,letterSpacing:"0.1em",marginBottom:"0.5rem"}}>KART SAHİBİ</div>
+            <div style={{fontSize:"2.25rem",fontWeight:800,letterSpacing:"-0.03em",textShadow:"0 2px 10px rgba(0,0,0,0.3)",lineHeight:1.1}}>{data?.name || shortId}</div>
+            
+            <div style={{marginTop:"2rem", background:"rgba(0,0,0,0.2)", borderRadius:"16px", padding:"1.25rem", border:"1px solid rgba(255,255,255,0.05)"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:"1rem"}}>
+                <div>
+                  <div style={{fontSize:"0.65rem",color:"rgba(255,255,255,0.5)",fontWeight:600,letterSpacing:"0.1em",marginBottom:"0.2rem"}}>İLERLEME</div>
+                  <div style={{display:"flex",alignItems:"baseline",gap:"0.3rem"}}>
+                    <span style={{fontSize:"1.75rem",fontWeight:800}}>{stamps}</span>
+                    <span style={{fontSize:"0.9rem",color:"rgba(255,255,255,0.6)",fontWeight:600}}>/ {required} DAMGA</span>
+                  </div>
+                </div>
+                {isReady ? (
+                  <div style={{background:"#10B981",color:"white",fontSize:"0.65rem",fontWeight:800,padding:"0.4rem 0.8rem",borderRadius:"100px",letterSpacing:"0.05em",animation:"popIn 0.3s forwards"}}>HEDİYE HAZIR</div>
+                ) : (
+                  <div style={{fontSize:"0.75rem",color:"rgba(255,255,255,0.8)",fontWeight:600,maxWidth:"100px",textAlign:"right"}}>{gift}</div>
+                )}
+              </div>
+              
+              <div style={{display:"flex",flexWrap:"wrap",gap:"8px",justifyContent:"space-between"}}>
+                {Array.from({length: Math.min(required, 15)}).map((_,i)=>(
+                  <div key={i} style={{
+                    width:"28px",height:"28px",borderRadius:"50%",
+                    background: i < stamps ? "white" : "rgba(255,255,255,0.1)",
+                    border: i < stamps ? "none" : "1px solid rgba(255,255,255,0.2)",
+                    display:"flex",alignItems:"center",justifyContent:"center",
+                    boxShadow: i < stamps ? `0 0 10px ${cardColor}80` : "none"
+                  }}>
+                    {i < stamps && <span style={{color:cardColor,fontSize:"12px"}}>★</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        ) : (
-          <div style={styles.giftLabel}>{gift}</div>
-        )}
 
-        {/* ── Stamps ── */}
-        <div style={styles.stampsGrid}>
-          {Array.from({ length: required }).map((_, i) => (
-            <StampDot
-              key={i}
-              filled={i < stamps}
-              isGift={i === required - 1}
-              color={cardColor}
-              index={i}
-              delay={i * 30}
-            />
-          ))}
-        </div>
-
-        {/* ── Progress bar ── */}
-        <div style={styles.progressTrack}>
-          <div
-            style={{
-              ...styles.progressFill,
-              width: `${progress * 100}%`,
-              background: "rgba(255,255,255,0.9)",
-              boxShadow: progress > 0 ? `0 0 12px rgba(255,255,255,0.5)` : "none",
-            }}
-          />
-        </div>
-
-        {/* ── Card Footer ── */}
-        <div style={styles.cardFooter}>
-          <div style={styles.cardFooterLeft}>
-            <div style={styles.footerLabel}>DAMGA</div>
-            <div style={styles.footerValue}>{stamps} / {required}</div>
+          {/* ── CARD FOOTER & QR ── */}
+          <div style={{ position: "relative", zIndex: 3, padding: "1.5rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end", transform: "translateZ(15px)" }}>
+            <div>
+              <div style={{fontSize:"0.6rem",color:"rgba(255,255,255,0.5)",fontWeight:600,letterSpacing:"0.05em",marginBottom:"0.2rem"}}>OKUTMA KODU</div>
+              <div style={{fontSize:"0.9rem",color:"rgba(255,255,255,0.9)",fontWeight:600,fontFamily:"monospace"}}>{shortId}</div>
+            </div>
+            
+            <div style={{
+              background: "rgba(255,255,255,0.95)", padding: "6px", borderRadius: "12px", 
+              boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: "4px"
+            }}>
+              <QRCodeSVG value={id} size={64} level="L" fgColor="#0F0F13" bgColor="transparent" includeMargin={false} />
+            </div>
           </div>
-          <div style={styles.cardFooterRight} style={{textAlign: "right"}}>
-            <div style={styles.footerLabel}>{data?.name ? "MÜŞTERİ" : "MÜŞTERİ NO"}</div>
-            <div style={styles.footerValue} style={{textTransform: "uppercase"}}>{data?.name || shortId}</div>
-          </div>
-        </div>
-
-        {/* ── Dashed divider (perforation style) ── */}
-        <div style={styles.perforation}>
-          <div style={styles.perforationCircleLeft} />
-          <div style={styles.perforationLine} />
-          <div style={styles.perforationCircleRight} />
-        </div>
-
-        {/* ── QR Section (inside card, bottom half) ── */}
-        <div style={styles.qrSection}>
-          <div style={styles.qrLabel}>KASADA OKUTUN</div>
-          <div style={styles.qrBox}>
-            <QRCodeSVG
-              value={id}
-              size={148}
-              bgColor={"transparent"}
-              fgColor={"#0F172A"}
-              level={"H"}
-              includeMargin={false}
-            />
-          </div>
-          <div style={styles.qrSubLabel}>Her 3 saniyede otomatik yenilenir</div>
         </div>
       </div>
 
