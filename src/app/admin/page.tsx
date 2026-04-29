@@ -377,14 +377,8 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">Hediye Seç</label>
-                      <div className="gift-select">
-                        {GIFTS.map(g=>(
-                          <button key={g} className={`gift-option ${campaign.giftDescription===g?"selected":""}`}
-                            onClick={()=>setCampaign(c=>c?{...c,giftDescription:g}:null)}>{g}</button>
-                        ))}
-                      </div>
-                      <input className="form-input" style={{marginTop:"0.75rem"}} placeholder="Özel hediye yaz..."
+                      <label className="form-label">Kampanya Hediyesi</label>
+                      <input className="form-input" placeholder="Örn: 1 Bedava Kahve, %10 İndirim..."
                         value={campaign.giftDescription} onChange={e=>setCampaign(c=>c?{...c,giftDescription:e.target.value}:null)}/>
                     </div>
 
