@@ -153,7 +153,7 @@ export default function CustomerCard({
   };
 
   useEffect(() => {
-    fetchCustomer();
+    setTimeout(() => fetchCustomer(), 0);
     const interval = setInterval(fetchCustomer, 3000);
     return () => clearInterval(interval);
   }, [id]);
@@ -232,13 +232,17 @@ export default function CustomerCard({
             <div key={i} style={{
               position:"absolute", width:10, height:10, background: ["#FFD700","#FF6B6B","#4ECDC4","#45B7D1"][i%4],
               borderRadius: i%2===0?"50%":"2px", top:"50%", left:"50%",
-              animation:`confettiFly ${0.6 + Math.random()*0.4}s ease-out forwards`,
+              animation:`confettiFly${i} ${0.6 + (((i * 13) % 100) / 100)*0.4}s ease-out forwards`,
               transformOrigin:"center",
-              transform:`rotate(${Math.random()*360}deg) translateY(-${100+Math.random()*150}px)`
+              transform:`rotate(${(((i * 27) % 100) / 100)*360}deg) translateY(-${100+(((i * 41) % 100) / 100)*150}px)`
             }}/>
           ))}
           <style>{`
-            @keyframes confettiFly { 0% { opacity: 1; transform: translate(0,0) scale(0); } 100% { opacity: 0; transform: translate(${(Math.random()-0.5)*300}px, ${(Math.random()-0.5)*300}px) scale(1.5) rotate(360deg); } }
+            ${Array.from({length:12}).map((_,i) => {
+               const r1 = ((i * 17) % 100) / 100;
+               const r2 = ((i * 31) % 100) / 100;
+               return "@keyframes confettiFly" + i + " { 0% { opacity: 1; transform: translate(0,0) scale(0); } 100% { opacity: 0; transform: translate(" + ((r1-0.5)*300) + "px, " + ((r2-0.5)*300) + "px) scale(1.5) rotate(360deg); } }";
+            }).join('\\n')}
             @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
           `}</style>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import Link from "next/link";
 export default function LoginPage() {
   const router = useRouter();
   const [tab, setTab] = useState<"login"|"register">("login");
@@ -90,7 +90,7 @@ export default function LoginPage() {
           Demo modunda kayıt gerekmez — admin paneliyle başlayın
         </p>
       </div>
-      <p style={S.back}><a href="/" style={{color:"#6366F1",textDecoration:"none"}}>← Ana sayfaya dön</a></p>
+      <p style={S.back}><Link href="/" style={{color:"#6366F1",textDecoration:"none"}}>← Ana sayfaya dön</Link></p>
     </div>
   );
 }

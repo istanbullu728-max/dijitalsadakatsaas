@@ -31,8 +31,8 @@ export interface Campaign {
 
 // In-memory Database
 // (Resets when the dev server restarts, perfect for MVP without Firebase)
-let customers: Customer[] = [];
-let logs: StampLog[] = [];
+const customers: Customer[] = [];
+const logs: StampLog[] = [];
 let campaign: Campaign = {
   requiredStamps: 10,
   isActive: true,
@@ -163,7 +163,6 @@ export const db = {
   },
 
   getLogs: (period: 'today' | 'week' | 'all' = 'all') => {
-    const now = Date.now();
     const todayStart = (() => { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
     const weekStart = todayStart - 6 * 86400000;
 

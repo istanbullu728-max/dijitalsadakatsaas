@@ -219,7 +219,7 @@ export default function AdminDashboard() {
     } finally { setLoading(false); setRefreshing(false); }
   }, [logPeriod]);
 
-  useEffect(()=>{ fetchAll(); }, [fetchAll]);
+  useEffect(()=>{ setTimeout(() => fetchAll(), 0); }, [fetchAll]);
 
   /* Refetch logs when period changes */
   useEffect(()=>{

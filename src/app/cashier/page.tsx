@@ -17,7 +17,7 @@ export default function CashierPage() {
   // Check auth cookie on mount (simplified for MVP)
   useEffect(() => {
     if (document.cookie.includes("cashier_auth=authenticated")) {
-      setIsAuthenticated(true);
+      setTimeout(() => setIsAuthenticated(true), 0);
     }
   }, []);
 
@@ -37,7 +37,7 @@ export default function CashierPage() {
         const data = await res.json();
         setError(data.error || "Geçersiz PIN");
       }
-    } catch (err) {
+    } catch {
       setError("Sunucu hatası");
     } finally {
       setIsProcessing(false);

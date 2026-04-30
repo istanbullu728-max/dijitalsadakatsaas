@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       isRewardReached,
       campaign
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Sunucu hatası' }, { status: 400 });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Sunucu hatası' }, { status: 400 });
   }
 }

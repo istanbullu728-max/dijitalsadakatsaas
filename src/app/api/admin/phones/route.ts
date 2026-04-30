@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     }
     const updated = db.updateCustomerPhone(customerId, phone);
     return NextResponse.json({ success: true, customer: updated });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Sunucu hatası' }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Sunucu hatası' }, { status: 500 });
   }
 }
