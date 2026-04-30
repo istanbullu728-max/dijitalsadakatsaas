@@ -11,7 +11,12 @@ export default function CashierPage() {
   const [successData, setSuccessData] = useState<{ stamps: number; total: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [pendingCustomer, setPendingCustomer] = useState<any>(null);
+  const [pendingCustomer, setPendingCustomer] = useState<{
+    id: string;
+    name: string;
+    stamps: number;
+    total: number;
+  } | null>(null);
   
   const scannerRef = useRef<Html5Qrcode | null>(null);
 
