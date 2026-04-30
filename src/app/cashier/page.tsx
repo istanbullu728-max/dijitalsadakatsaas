@@ -69,10 +69,7 @@ export default function CashierPage() {
               const qrboxSize = Math.floor(minEdge * 0.85); // Larger scanning area
               return { width: qrboxSize, height: qrboxSize };
             },
-            aspectRatio: 1.0,
-            experimentalFeatures: {
-              useBarCodeDetectorIfSupported: true
-            }
+            aspectRatio: 1.0
           },
           async (decodedText) => {
             if (isProcessing) return; // Prevent double processing
