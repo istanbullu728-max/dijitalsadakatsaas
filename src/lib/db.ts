@@ -30,8 +30,12 @@ export interface Campaign {
 }
 
 // In-memory Database
-// (Resets when the dev server restarts, perfect for MVP without Firebase)
-const customers: Customer[] = [];
+// IMPORTANT: This resets when Vercel restarts/redeploys. 
+// For production, connect to a real database (Supabase, Firebase, etc.)
+const customers: Customer[] = [
+  { id: "test-customer-1", name: "Hasan Kaya", stamps: 2, createdAt: Date.now(), lastStampAt: null },
+  { id: "test-customer-2", name: "Ayşe Yılmaz", stamps: 9, createdAt: Date.now(), lastStampAt: null },
+];
 const logs: StampLog[] = [];
 let campaign: Campaign = {
   requiredStamps: 10,

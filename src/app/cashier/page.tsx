@@ -11,6 +11,7 @@ export default function CashierPage() {
   const [successData, setSuccessData] = useState<{ stamps: number; total: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [pendingCustomer, setPendingCustomer] = useState<any>(null);
   
   const scannerRef = useRef<Html5Qrcode | null>(null);
 
@@ -110,10 +111,36 @@ export default function CashierPage() {
     setIsProcessing(true);
     setError(null);
     try {
+      const res = await fetch(`/api/customer/${customerId}`);
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setPendingCustomer({
+          id: customerId,
+          name: data.customer.name,
+          stamps: data.customer.stamps,
+          total: data.campaign.requiredStamps
+        });
+      } else {
+        setError(data.error || "Müşteri bulunamadı");
+      }
+    } catch {
+      setError("Sunucu hatası");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const confirmStamp = async () => {
+    if (!pendingCustomer || isProcessing) return;
+    
+    setIsProcessing(true);
+    setError(null);
+    try {
       const res = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerId }),
+        body: JSON.stringify({ customerId: pendingCustomer.id }),
       });
       const data = await res.json();
 
@@ -122,13 +149,14 @@ export default function CashierPage() {
           stamps: data.customer.stamps,
           total: data.campaign.requiredStamps
         });
+        setPendingCustomer(null);
         
-        // Auto hide success overlay after 2 seconds
+        // Auto hide success overlay after 2.5 seconds
         setTimeout(() => {
           setSuccessData(null);
         }, 2500);
       } else {
-        setError(data.error || "İşlem başarısız");
+        setError(data.error || "Damga eklenemedi");
       }
     } catch {
       setError("Sunucu hatası");
@@ -244,6 +272,38 @@ export default function CashierPage() {
             <button onClick={stopScanner} className="btn w-full bg-muted text-foreground">
               İptal Et
             </button>
+          </div>
+        ) : pendingCustomer ? (
+          <div className="w-full flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-300">
+            <div className="w-full bg-card border border-border p-8 rounded-3xl shadow-2xl text-center">
+              <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <QrCode className="w-10 h-10 text-primary" />
+              </div>
+              <h2 className="text-sm font-bold text-muted-foreground uppercase letter-spacing-wide mb-1">Müşteri Bulundu</h2>
+              <h3 className="text-3xl font-black text-foreground mb-4">{pendingCustomer.name}</h3>
+              
+              <div className="flex justify-center gap-2 mb-8">
+                {Array.from({length: pendingCustomer.total}).map((_, i) => (
+                  <div key={i} className={`w-3 h-3 rounded-full ${i < pendingCustomer.stamps ? 'bg-primary' : 'bg-muted'}`} />
+                ))}
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={confirmStamp} 
+                  disabled={isProcessing}
+                  className="btn btn-primary btn-massive w-full py-6 text-xl shadow-xl shadow-primary/20"
+                >
+                  {isProcessing ? "İşleniyor..." : "DAMGA EKLE"}
+                </button>
+                <button 
+                  onClick={() => setPendingCustomer(null)} 
+                  className="text-muted-foreground font-semibold hover:text-foreground transition-colors py-2"
+                >
+                  Vazgeç
+                </button>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="w-full flex flex-col items-center gap-6">
