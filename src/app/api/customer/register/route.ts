@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const newCustomer = db.createCustomer(name.trim());
     
     return NextResponse.json({ success: true, customer: newCustomer });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }

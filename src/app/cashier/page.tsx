@@ -83,8 +83,7 @@ export default function CashierPage() {
             // Ignore scan errors (background noise)
           }
         );
-      } catch (err) {
-        console.error(err);
+      } catch {
         setError("Kamera açılamadı. İzinleri kontrol edin.");
         setIsScanning(false);
       }
@@ -128,7 +127,7 @@ export default function CashierPage() {
       } else {
         setError(data.error || "İşlem başarısız");
       }
-    } catch (err) {
+    } catch {
       setError("Sunucu hatası");
     } finally {
       setIsProcessing(false);

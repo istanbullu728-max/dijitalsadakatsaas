@@ -13,7 +13,7 @@ export async function GET() {
       campaign,
       customers: customers.sort((a, b) => b.stamps - a.stamps) // Sort by most loyal
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }

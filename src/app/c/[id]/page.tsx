@@ -24,15 +24,7 @@ function hexToRgb(hex: string) {
   return { r, g, b };
 }
 
-function isDark(hex: string) {
-  const { r, g, b } = hexToRgb(hex);
-  return (r * 299 + g * 587 + b * 114) / 1000 < 128;
-}
 
-function lighten(hex: string, amount = 40) {
-  const { r, g, b } = hexToRgb(hex);
-  return `rgb(${Math.min(r + amount, 255)},${Math.min(g + amount, 255)},${Math.min(b + amount, 255)})`;
-}
 
 function darken(hex: string, amount = 30) {
   const { r, g, b } = hexToRgb(hex);
@@ -40,70 +32,7 @@ function darken(hex: string, amount = 30) {
 }
 
 /* ─── Stamp Dot ─── */
-function StampDot({
-  filled,
-  isGift,
-  color,
-  index,
-  delay,
-}: {
-  filled: boolean;
-  isGift: boolean;
-  color: string;
-  index: number;
-  delay: number;
-}) {
-  return (
-    <div
-      style={{
-        width: 36,
-        height: 36,
-        borderRadius: "50%",
-        border: filled
-          ? "none"
-          : `2px solid rgba(255,255,255,${isGift ? 0.6 : 0.25})`,
-        background: filled
-          ? "rgba(255,255,255,0.95)"
-          : isGift
-          ? "rgba(255,255,255,0.08)"
-          : "rgba(255,255,255,0.05)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        transition: "all 0.4s cubic-bezier(0.34,1.56,0.64,1)",
-        transitionDelay: `${delay}ms`,
-        transform: filled ? "scale(1)" : "scale(0.92)",
-        boxShadow: filled
-          ? `0 0 0 3px rgba(255,255,255,0.15), 0 4px 12px rgba(0,0,0,0.2)`
-          : "none",
-        flexShrink: 0,
-      }}
-    >
-      {filled && (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M5 13l4 4L19 7"
-            stroke={color}
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      )}
-      {!filled && isGift && (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M20 12v10H4V12M22 7H2v5h20V7zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"
-            stroke="rgba(255,255,255,0.7)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      )}
-    </div>
-  );
-}
+
 
 /* ─── Main ─── */
 export default function CustomerCard({
@@ -121,39 +50,39 @@ export default function CustomerCard({
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
   const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
 
-  const fetchCustomer = async () => {
-    try {
-      const res = await fetch(`/api/customer/${id}`);
-      const json = await res.json();
-      if (json.success) {
-        const newStamps = json.customer.stamps;
-        if (prevStampsRef.current !== null && newStamps > prevStampsRef.current) {
-          setShowAnimation(true);
-          setTimeout(() => setShowAnimation(false), 3000);
-        }
-        prevStampsRef.current = newStamps; // Update ref
-
-        setData({
-          stamps: newStamps,
-          name: json.customer.name,
-          campaign: {
-            requiredStamps: json.campaign.requiredStamps,
-            giftDescription: json.campaign.giftDescription ?? "1 Bedava Kahve",
-            cardColor: json.campaign.cardColor ?? "#6366F1",
-            businessName: json.campaign.businessName ?? "",
-            logo: json.campaign.logo ?? "",
-          },
-        });
-      }
-    } catch {
-      /* silent */
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    setTimeout(() => fetchCustomer(), 0);
+    const fetchCustomer = async () => {
+      try {
+        const res = await fetch(`/api/customer/${id}`);
+        const json = await res.json();
+        if (json.success) {
+          const newStamps = json.customer.stamps;
+          if (prevStampsRef.current !== null && newStamps > prevStampsRef.current) {
+            setShowAnimation(true);
+            setTimeout(() => setShowAnimation(false), 3000);
+          }
+          prevStampsRef.current = newStamps; // Update ref
+
+          setData({
+            stamps: newStamps,
+            name: json.customer.name,
+            campaign: {
+              requiredStamps: json.campaign.requiredStamps,
+              giftDescription: json.campaign.giftDescription ?? "1 Bedava Kahve",
+              cardColor: json.campaign.cardColor ?? "#6366F1",
+              businessName: json.campaign.businessName ?? "",
+              logo: json.campaign.logo ?? "",
+            },
+          });
+        }
+      } catch {
+        /* silent */
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomer();
     const interval = setInterval(fetchCustomer, 3000);
     return () => clearInterval(interval);
   }, [id]);

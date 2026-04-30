@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const logs = db.getLogs(period);
 
     return NextResponse.json({ success: true, logs });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }

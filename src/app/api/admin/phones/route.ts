@@ -12,7 +12,7 @@ export async function GET() {
       createdAt: c.createdAt,
     }));
     return NextResponse.json({ success: true, phones });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }

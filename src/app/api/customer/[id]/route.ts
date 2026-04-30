@@ -26,7 +26,7 @@ export async function GET(
       customer,
       campaign
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }

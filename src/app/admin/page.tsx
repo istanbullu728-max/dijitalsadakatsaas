@@ -22,7 +22,7 @@ interface LogEntry  { id: string; customerId: string; timestamp: number; cashier
 type Section = "overview" | "card" | "logs" | "phones" | "stand" | "preview" | "cashier";
 
 const COLORS = ["#6366F1","#8B5CF6","#EC4899","#F59E0B","#10B981","#0EA5E9","#EF4444","#0F172A"];
-const GIFTS  = ["1 Bedava Kahve","1 Bedava Tatlı","İndirim Kuponu","Sürpriz Hediye","1 Bedava İçecek","Ücretsiz Menü"];
+
 const SECTIONS: { id: Section; label: string; icon: React.ReactNode }[] = [
   { id:"overview", label:"Panel Özeti",         icon:<LayoutDashboard size={18}/> },
   { id:"card",     label:"Sadakat Kartı",        icon:<CreditCard size={18}/> },
@@ -54,7 +54,7 @@ function BarChart({ data }: { data:{label:string;count:number}[] }) {
 }
 
 /* ── 3D Card Preview ── */
-function CardPreview({ color, stamps, gift, logo, businessName }: { color:string; stamps:number; gift:string; logo?:string; businessName?:string }) {
+function CardPreview({ color, stamps, logo, businessName }: { color:string; stamps:number; logo?:string; businessName?:string }) {
   const name = businessName || 'İşletmem';
   const initials = name.slice(0,2).toUpperCase();
   const cardRef = useRef<HTMLDivElement>(null);
@@ -532,7 +532,7 @@ export default function AdminDashboard() {
                   <div>
                     <div className="form-label" style={{marginBottom:"0.75rem"}}>Canlı Önizleme</div>
                     <div className="card-preview-wrapper" style={{background: "transparent", padding: 0}}>
-                      <CardPreview color={campaign.cardColor} stamps={campaign.requiredStamps} gift={campaign.giftDescription} logo={campaign.logo} businessName={campaign.businessName}/>
+                      <CardPreview color={campaign.cardColor} stamps={campaign.requiredStamps} logo={campaign.logo} businessName={campaign.businessName}/>
                       <div style={{fontSize:"0.72rem",color:"#94A3B8",textAlign:"center",marginTop:"1rem"}}>
                         {campaign.requiredStamps} damga → {campaign.giftDescription}
                       </div>

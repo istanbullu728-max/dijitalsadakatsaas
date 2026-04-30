@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const campaign = db.getCampaign();
     return NextResponse.json({ success: true, campaign });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }
