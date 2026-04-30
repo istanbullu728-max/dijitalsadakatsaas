@@ -273,7 +273,7 @@ export default function CustomerCard({
               boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
               transform: "translateZ(35px)", flexShrink: 0
             }}>
-              <QRCodeSVG value={id} size={85} level="M" fgColor="#000000" bgColor="#FFFFFF" includeMargin={false} />
+              <QRCodeSVG value={id} size={120} level="M" fgColor="#000000" bgColor="#FFFFFF" includeMargin={true} />
             </div>
           </div>
         </div>
