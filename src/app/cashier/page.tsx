@@ -56,12 +56,24 @@ export default function CashierPage() {
         
         await html5QrCode.start(
           { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 250, height: 250 } },
+          { 
+            fps: 25, 
+            qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+              const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+              const qrboxSize = Math.floor(minEdge * 0.75);
+              return { width: qrboxSize, height: qrboxSize };
+            },
+            aspectRatio: 1.0
+          },
           async (decodedText) => {
+            if (isProcessing) return; // Prevent double processing
+            
             // Stop scanning immediately to prevent multiple hits
             if (scannerRef.current) {
-              await scannerRef.current.stop();
-              scannerRef.current.clear();
+              try {
+                await scannerRef.current.stop();
+                scannerRef.current.clear();
+              } catch(e) { console.error(e); }
               scannerRef.current = null;
             }
             setIsScanning(false);

@@ -346,11 +346,11 @@ export default function CustomerCard({
             </div>
             
             <div style={{
-              background: "rgba(255,255,255,0.95)", padding: "6px", borderRadius: "12px", 
+              background: "white", padding: "8px", borderRadius: "12px", 
               boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
               display: "flex", flexDirection: "column", alignItems: "center", gap: "4px"
             }}>
-              <QRCodeSVG value={id} size={64} level="L" fgColor="#0F0F13" bgColor="transparent" includeMargin={false} />
+              <QRCodeSVG value={id} size={100} level="M" fgColor="#000000" bgColor="#FFFFFF" includeMargin={false} />
             </div>
           </div>
         </div>
