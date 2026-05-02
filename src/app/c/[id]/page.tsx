@@ -53,7 +53,7 @@ export default function CustomerCard({
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
-        const res = await fetch(`/api/customer/${id}`);
+        const res = await fetch(`/api/customer/${id}`, { cache: 'no-store' });
         const json = await res.json();
         if (json.success) {
           const newStamps = json.customer.stamps;
@@ -181,7 +181,7 @@ export default function CustomerCard({
       <div style={{ ...styles.ambientGlow, background: `radial-gradient(ellipse 70% 60% at 50% 30%, ${cardColor}55 0%, transparent 70%)` }} />
 
       <div style={{ perspective: "1500px", width: "100%", maxWidth: "380px", margin: "0 auto", zIndex: 10, padding: "0 1rem" }}>
-        {/* ── THE CARD (Premium 3D Credit Card Feel) ── */}
+        {/* ── THE CARD ── */}
         <div 
           ref={cardRef}
           onMouseMove={handleMouseMove}
@@ -203,7 +203,7 @@ export default function CustomerCard({
               : "0 25px 50px -12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.2)",
             overflow: "hidden", display: "flex", flexDirection: "column",
             padding: "1.25rem", color: "white",
-            marginBottom: "2.5rem",
+            marginBottom: "2rem",
             border: "1px solid rgba(255,255,255,0.1)"
           }}
         >
@@ -218,28 +218,24 @@ export default function CustomerCard({
           }} />
 
           {/* Header */}
-          <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem", transform: "translateZ(20px)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <div style={{ 
-                width: 32, height: 32, borderRadius: "8px", background: "rgba(255,255,255,0.1)", 
-                border: "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", backdropFilter: "blur(4px)" 
-              }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {logo ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <span style={{fontSize:"0.7rem",fontWeight:900}}>{initials}</span>}
-              </div>
-              <div style={{fontSize:"0.9rem",fontWeight:800,letterSpacing:"-0.01em"}}>{businessName}</div>
+          <div style={{ position: "relative", zIndex: 3, display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem", transform: "translateZ(20px)" }}>
+            <div style={{ 
+              width: 28, height: 28, borderRadius: "6px", background: "rgba(255,255,255,0.1)", 
+              border: "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", backdropFilter: "blur(4px)" 
+            }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {logo ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <span style={{fontSize:"0.6rem",fontWeight:900}}>{initials}</span>}
             </div>
-            <div style={{fontSize:"0.5rem",fontWeight:700,color:"rgba(255,255,255,0.5)",letterSpacing:"0.15em",textTransform:"uppercase"}}>PLATINUM CARD</div>
+            <div style={{fontSize:"1rem",fontWeight:900,letterSpacing:"-0.01em"}}>{businessName}</div>
           </div>
 
-          {/* User Info */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(30px)", marginBottom: "1rem" }}>
-            <div style={{fontSize:"0.5rem",color:"rgba(255,255,255,0.4)",fontWeight:600,letterSpacing:"0.05em",marginBottom:"0.1rem"}}>CARD HOLDER</div>
-            <div style={{fontSize:"1.2rem",fontWeight:900,letterSpacing:"-0.02em",fontFamily:"monospace"}}>{data?.name?.toUpperCase() || shortId}</div>
+          {/* User Name */}
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(30px)", marginBottom: "0.5rem" }}>
+            <div style={{fontSize:"1.4rem",fontWeight:900,letterSpacing:"-0.02em"}}>{data?.name?.toUpperCase() || shortId}</div>
           </div>
 
-          {/* Stamps Grid - Optimized for Credit Card Shape */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(40px)", marginBottom: "0.75rem" }}>
+          {/* Stamps Grid - Fixed sizing to prevent overflow */}
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(40px)", marginBottom: "auto" }}>
              <div style={{ 
                display: "grid", 
                gridTemplateColumns: "repeat(5, 1fr)", 
@@ -248,61 +244,46 @@ export default function CustomerCard({
              }}>
                {Array.from({length: Math.min(required, 10)}).map((_,i)=>(
                  <div key={i} style={{
+                   width: "100%",
                    aspectRatio: "1", 
                    borderRadius: "50%",
-                   background: i < stamps ? "white" : "rgba(255,255,255,0.06)",
-                   border: i < stamps ? "none" : "1px solid rgba(255,255,255,0.1)",
+                   background: i < stamps ? "white" : "rgba(255,255,255,0.08)",
+                   border: i < stamps ? "none" : "1px solid rgba(255,255,255,0.15)",
                    display: "flex", alignItems: "center", justifyContent: "center",
                    transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
                  }}>
                    {i < stamps && (
-                     <div style={{ width: "50%", height: "50%", background: cardColor, borderRadius: "50%", boxShadow: "0 0 8px rgba(0,0,0,0.2)" }} />
+                     <div style={{ width: "40%", height: "40%", background: cardColor, borderRadius: "50%" }} />
                    )}
                  </div>
                ))}
              </div>
           </div>
 
-          {/* Reward Info */}
-          <div style={{ 
-            position: "relative", zIndex: 3, transform: "translateZ(25px)", 
-            marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "flex-end"
-          }}>
-            <div>
-              <div style={{fontSize:"0.5rem",color:"rgba(255,255,255,0.4)",fontWeight:600,letterSpacing:"0.05em"}}>STATUS</div>
-              <div style={{fontSize:"0.75rem",fontWeight:800,color:isReady ? "#4ADE80" : "white"}}>
-                {isReady ? "🎁 REWARD READY" : gift.toUpperCase()}
-              </div>
+          {/* Campaign Info */}
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(25px)", marginTop: "0.75rem", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "0.5rem" }}>
+            <div style={{fontSize:"0.7rem",fontWeight:800,color:isReady ? "#4ADE80" : "white", textTransform: "uppercase"}}>
+              {isReady ? "🎁 ÖDÜLÜNÜZ HAZIR!" : gift}
             </div>
-            <div style={{fontSize:"0.6rem",fontWeight:700,opacity:0.4,fontFamily:"monospace"}}>VALID THRU 12/29</div>
           </div>
         </div>
 
-        {/* ── QR CODE AREA (Minimalist Glassmorphism) ── */}
+        {/* ── QR CODE ONLY ── */}
         <div style={{
-          background: "rgba(255,255,255,0.05)",
-          backdropFilter: "blur(20px)",
-          borderRadius: "24px",
-          padding: "1.25rem",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: "0.75rem",
-          border: "1px solid rgba(255,255,255,0.1)",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
-          position: "relative",
-          zIndex: 20
+          justifyContent: "center",
+          marginTop: "1rem"
         }}>
-          <div style={{fontSize:"0.65rem",fontWeight:800,color:"rgba(255,255,255,0.4)",letterSpacing:"0.15em",textTransform:"uppercase"}}>SCAN FOR STAMP</div>
           <div style={{
             background: "white", 
             padding: "0.75rem", 
-            borderRadius: "12px", 
-            boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+            borderRadius: "16px", 
+            boxShadow: "0 10px 30px rgba(0,0,0,0.3)"
           }}>
-            {id && <QRCodeSVG value={id} size={140} level="H" fgColor="#000000" bgColor="#FFFFFF" includeMargin={false} />}
+            {id && <QRCodeSVG value={id} size={150} level="H" fgColor="#000000" bgColor="#FFFFFF" includeMargin={false} />}
           </div>
-          <div style={{fontSize:"0.6rem",color:"rgba(255,255,255,0.3)",fontWeight:600}}>Unique Member ID: {shortId}</div>
         </div>
       </div>
 
