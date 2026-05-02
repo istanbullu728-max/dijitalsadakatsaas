@@ -180,7 +180,8 @@ export default function CustomerCard({
       {/* ── Background glow ── */}
       <div style={{ ...styles.ambientGlow, background: `radial-gradient(ellipse 70% 60% at 50% 30%, ${cardColor}55 0%, transparent 70%)` }} />
 
-      <div style={{ perspective: "1500px", width: "100%", maxWidth: "380px", margin: "0 auto", zIndex: 10, padding: "0 1.25rem" }}>
+      <div style={{ perspective: "1500px", width: "100%", maxWidth: "380px", margin: "0 auto", zIndex: 10, padding: "0 1rem" }}>
+        {/* ── THE CARD ── */}
         <div 
           ref={cardRef}
           onMouseMove={handleMouseMove}
@@ -188,7 +189,8 @@ export default function CustomerCard({
           onTouchMove={handleMouseMove}
           onTouchEnd={handleMouseLeave}
           style={{
-            width: "100%", aspectRatio: "1.4 / 1", // Taller landscape to fit everything
+            width: "100%", 
+            minHeight: "220px",
             borderRadius: "24px", position: "relative",
             transformStyle: "preserve-3d",
             transform: mounted 
@@ -200,83 +202,111 @@ export default function CustomerCard({
               ? "0 40px 80px -20px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.3)"
               : "0 25px 50px -12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.2)",
             overflow: "hidden", display: "flex", flexDirection: "column",
-            padding: "1.5rem", color: "white"
+            padding: "1.5rem", color: "white",
+            marginBottom: "2rem"
           }}
         >
-          {/* Glare Effect */}
+          {/* Glare & Texture */}
           <div style={{
             position: "absolute", inset: 0, pointerEvents: "none", zIndex: 5,
             background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,${glare.opacity}), transparent 60%)`,
-            transition: rotate.x === 0 ? "opacity 0.5s ease" : "none"
           }} />
-
-          {/* Noise Texture */}
           <div style={{
             position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1, opacity: 0.04, mixBlendMode: "overlay",
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`
           }} />
 
-          {/* ── HEADER ── */}
-          <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", transform: "translateZ(20px)" }}>
+          {/* Header */}
+          <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", transform: "translateZ(20px)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
               <div style={{ 
-                width: 44, height: 44, borderRadius: "50%", background: "rgba(255,255,255,0.1)", 
+                width: 38, height: 38, borderRadius: "10px", background: "rgba(255,255,255,0.1)", 
                 border: "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", backdropFilter: "blur(4px)" 
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {logo ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <span style={{fontSize:"1rem",fontWeight:900}}>{initials}</span>}
+                {logo ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <span style={{fontSize:"0.8rem",fontWeight:900}}>{initials}</span>}
               </div>
-              <div>
-                <div style={{fontSize:"0.55rem",fontWeight:700,color:"rgba(255,255,255,0.5)",letterSpacing:"0.1em",textTransform:"uppercase"}}>SADAKAT KARTI</div>
-                <div style={{fontSize:"1.1rem",fontWeight:900,letterSpacing:"-0.01em"}}>{businessName}</div>
-              </div>
+              <div style={{fontSize:"1rem",fontWeight:800,letterSpacing:"-0.01em"}}>{businessName}</div>
             </div>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.6, transform: "translateZ(10px)" }}>
-              <path d="M4 8.5C6.5 6 9.5 5 12 5C14.5 5 17.5 6 20 8.5M6 11.5C8 10 10 9 12 9C14 9 16 10 18 11.5M8 14.5C9.5 13.5 10.5 13 12 13C13.5 13 14.5 13.5 16 14.5M10 17.5C10.5 17 11 17 12 17C13 17 13.5 17 14 17.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
+            <div style={{fontSize:"0.55rem",fontWeight:700,color:"rgba(255,255,255,0.5)",letterSpacing:"0.15em",textTransform:"uppercase"}}>PREMIUM</div>
           </div>
 
-          {/* ── USER NAME ── */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(25px)", marginBottom: "1.25rem" }}>
-            <div style={{fontSize:"0.6rem",color:"rgba(255,255,255,0.5)",fontWeight:600,letterSpacing:"0.05em"}}>KART SAHİBİ</div>
-            <div style={{fontSize:"1.75rem",fontWeight:900,letterSpacing:"-0.02em",textShadow:"0 2px 8px rgba(0,0,0,0.3)"}}>{data?.name || shortId}</div>
+          {/* User & Info */}
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(30px)", marginBottom: "1.5rem" }}>
+            <div style={{fontSize:"0.6rem",color:"rgba(255,255,255,0.4)",fontWeight:600,letterSpacing:"0.05em",marginBottom:"0.1rem"}}>MÜŞTERİ</div>
+            <div style={{fontSize:"1.4rem",fontWeight:900,letterSpacing:"-0.02em"}}>{data?.name || shortId}</div>
           </div>
 
-          {/* ── STAMPS GRID ── */}
-          <div style={{ position: "relative", zIndex: 3, flex: 1, transform: "translateZ(30px)" }}>
-            <div style={{fontSize:"0.6rem",color:"rgba(255,255,255,0.5)",fontWeight:700,letterSpacing:"0.05em",marginBottom:"0.5rem"}}>İLERLEME / {stamps} DAMGA</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" }}>
-              {Array.from({length: Math.min(required, 10)}).map((_,i)=>(
-                <div key={i} style={{
-                  aspectRatio: "1", borderRadius: "50%",
-                  background: i < stamps ? "white" : "rgba(255,255,255,0.1)",
-                  border: i < stamps ? "none" : "1px solid rgba(255,255,255,0.2)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: i < stamps ? `0 0 10px rgba(255,255,255,0.4)` : "none"
-                }}>
-                  {i < stamps && <span style={{color:cardColor,fontSize:"12px"}}>★</span>}
-                </div>
-              ))}
-            </div>
+          {/* Stamps Grid */}
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(40px)", marginBottom: "1rem" }}>
+             <div style={{fontSize:"0.6rem",color:"rgba(255,255,255,0.4)",fontWeight:700,letterSpacing:"0.05em",marginBottom:"0.75rem"}}>İLERLEME: {stamps}/{required}</div>
+             <div style={{ 
+               display: "grid", 
+               gridTemplateColumns: "repeat(5, 1fr)", 
+               gap: "10px",
+               maxWidth: "100%"
+             }}>
+               {Array.from({length: required}).map((_,i)=>(
+                 <div key={i} style={{
+                   aspectRatio: "1", 
+                   borderRadius: "50%",
+                   background: i < stamps ? "white" : "rgba(255,255,255,0.08)",
+                   border: i < stamps ? "none" : "1px solid rgba(255,255,255,0.15)",
+                   display: "flex", alignItems: "center", justifyContent: "center",
+                   transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                   transform: i < stamps ? "scale(1.05)" : "scale(1)",
+                   boxShadow: i < stamps ? `0 0 12px rgba(255,255,255,0.4)` : "none"
+                 }}>
+                   {i < stamps && (
+                     <svg width="12" height="12" viewBox="0 0 24 24" fill={cardColor} style={{filter:"drop-shadow(0 1px 1px rgba(0,0,0,0.1))"}}>
+                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z" />
+                     </svg>
+                   )}
+                 </div>
+               ))}
+             </div>
           </div>
 
-          {/* ── FOOTER: Reward & QR ── */}
-          <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "1rem" }}>
-            <div style={{ transform: "translateZ(20px)", maxWidth: "160px" }}>
-              <div style={{fontSize:"0.6rem",color:"rgba(255,255,255,0.5)",fontWeight:600,letterSpacing:"0.05em",marginBottom:"0.25rem"}}>HEDİYE</div>
-              <div style={{fontSize:"0.8rem",fontWeight:800,color:isReady ? "#10B981" : "white", lineHeight:1.2}}>
+          {/* Reward Info */}
+          <div style={{ 
+            position: "relative", zIndex: 3, transform: "translateZ(25px)", 
+            marginTop: "auto", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "1rem",
+            display: "flex", justifyContent: "space-between", alignItems: "center"
+          }}>
+            <div>
+              <div style={{fontSize:"0.55rem",color:"rgba(255,255,255,0.4)",fontWeight:600,letterSpacing:"0.05em"}}>ÖDÜL</div>
+              <div style={{fontSize:"0.8rem",fontWeight:800,color:isReady ? "#4ADE80" : "white"}}>
                 {isReady ? "🎁 ÖDÜLÜNÜZ HAZIR!" : gift.toUpperCase()}
               </div>
             </div>
-            
-            <div style={{
-              background: "white", padding: "6px", borderRadius: "10px", 
-              boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-              transform: "translateZ(35px)", flexShrink: 0
-            }}>
-              <QRCodeSVG value={id} size={120} level="M" fgColor="#000000" bgColor="#FFFFFF" includeMargin={true} />
-            </div>
+            <div style={{fontSize:"0.7rem",fontWeight:700,opacity:0.6,fontFamily:"monospace"}}>#{shortId}</div>
           </div>
+        </div>
+
+        {/* ── QR CODE AREA (BELOW CARD) ── */}
+        <div style={{
+          background: "rgba(255,255,255,0.95)",
+          borderRadius: "24px",
+          padding: "1.5rem",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "1rem",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+          transform: mounted ? "translateY(0)" : "translateY(20px)",
+          opacity: mounted ? 1 : 0,
+          transition: "all 0.6s ease 0.4s"
+        }}>
+          <div style={{fontSize:"0.7rem",fontWeight:800,color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase"}}>KASİYER İÇİN OKUTUN</div>
+          <div style={{
+            background: "white", 
+            padding: "1rem", 
+            borderRadius: "16px", 
+            boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.05)"
+          }}>
+            <QRCodeSVG value={id} size={160} level="H" fgColor="#000000" bgColor="#FFFFFF" includeMargin={false} />
+          </div>
+          <div style={{fontSize:"0.6rem",color:"#94A3B8",fontWeight:600}}>Dijital Müşteri Kimliği</div>
         </div>
       </div>
 
