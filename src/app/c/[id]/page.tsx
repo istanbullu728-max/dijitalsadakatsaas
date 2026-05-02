@@ -293,9 +293,8 @@ export default function CustomerCard({
           alignItems: "center",
           gap: "1rem",
           boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-          transform: mounted ? "translateY(0)" : "translateY(20px)",
-          opacity: mounted ? 1 : 0,
-          transition: "all 0.6s ease 0.4s"
+          position: "relative",
+          zIndex: 20
         }}>
           <div style={{fontSize:"0.7rem",fontWeight:800,color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase"}}>KASİYER İÇİN OKUTUN</div>
           <div style={{
@@ -304,7 +303,7 @@ export default function CustomerCard({
             borderRadius: "16px", 
             boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.05)"
           }}>
-            <QRCodeSVG value={id} size={160} level="H" fgColor="#000000" bgColor="#FFFFFF" includeMargin={false} />
+            {id && <QRCodeSVG value={id} size={160} level="H" fgColor="#000000" bgColor="#FFFFFF" includeMargin={false} />}
           </div>
           <div style={{fontSize:"0.6rem",color:"#94A3B8",fontWeight:600}}>Dijital Müşteri Kimliği</div>
         </div>
@@ -335,10 +334,10 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
-    padding: "2rem 1rem",
+    justifyContent: "flex-start",
+    padding: "3rem 1rem",
     position: "relative",
-    overflow: "hidden",
+    overflowY: "auto",
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
   },
 
