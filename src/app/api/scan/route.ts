@@ -9,7 +9,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Müşteri ID gerekli' }, { status: 400 });
     }
 
-    const customer = db.ensureCustomer(customerId);
+    db.ensureCustomer(customerId);
 
     const updatedCustomer = db.addStamp(customerId, 'cashier-1');
     const campaign = db.getCampaign();

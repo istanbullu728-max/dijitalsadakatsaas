@@ -134,6 +134,7 @@ function CardPreview({ color, stamps, logo, businessName }: { color:string; stam
               overflow: "hidden", flexShrink: 0, backdropFilter: "blur(4px)"
             }}>
               {logo
+                /* eslint-disable-next-line @next/next/no-img-element */
                 ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
                 : <span style={{fontSize:"0.8rem",fontWeight:800,color:"white"}}>{initials}</span>
               }
@@ -498,6 +499,7 @@ export default function AdminDashboard() {
                         {/* Preview circle */}
                         <div style={{width:52,height:52,borderRadius:"50%",background:campaign.cardColor,border:"2px solid #E2E8F0",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0,boxShadow:"0 2px 8px rgba(0,0,0,0.1)"}}>
                           {campaign.logo
+                            /* eslint-disable-next-line @next/next/no-img-element */
                             ? <img src={campaign.logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
                             : <span style={{fontSize:"1rem",fontWeight:800,color:"white"}}>{(campaign.businessName||'İ').slice(0,2).toUpperCase()}</span>
                           }

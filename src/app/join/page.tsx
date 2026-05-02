@@ -164,6 +164,7 @@ export default function JoinPage() {
               </div>
               <div style={{ width: 44, height: 44, background: "rgba(255,255,255,0.1)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.1)" }}>
                 {campaign?.logo 
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   ? <img src={campaign.logo} alt="logo" style={{ width: "80%", height: "80%", objectFit: "contain", margin: "auto" }} />
                   : <CreditCard color="white" size={24} style={{ margin: "auto" }} />
                 }

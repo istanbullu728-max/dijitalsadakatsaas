@@ -223,6 +223,7 @@ export default function CustomerCard({
                 width: 44, height: 44, borderRadius: "50%", background: "rgba(255,255,255,0.1)", 
                 border: "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", backdropFilter: "blur(4px)" 
               }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 {logo ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <span style={{fontSize:"1rem",fontWeight:900}}>{initials}</span>}
               </div>
               <div>
