@@ -63,18 +63,22 @@ export default function CashierPage() {
         await html5QrCode.start(
           { facingMode: "environment" },
           { 
-            fps: 30, 
+            fps: 20, // Slightly lower FPS for better processing stability on mobile
             qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
               const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-              const qrboxSize = Math.floor(minEdge * 0.85); // Larger scanning area
+              const qrboxSize = Math.floor(minEdge * 0.8);
               return { width: qrboxSize, height: qrboxSize };
             },
-            aspectRatio: 1.0
+            aspectRatio: 1.0,
+            // experimental features for faster scanning
+            experimentalFeatures: {
+              useBarCodeDetectorIfSupported: true
+            }
           },
           async (decodedText) => {
-            if (isProcessing) return; // Prevent double processing
+            if (isProcessing) return;
             
-            // Stop scanning immediately to prevent multiple hits
+            // Stop scanning immediately
             if (scannerRef.current) {
               try {
                 await scannerRef.current.stop();
@@ -86,14 +90,15 @@ export default function CashierPage() {
             processScan(decodedText);
           },
           () => {
-            // Ignore scan errors (background noise)
+            // Ignore scan errors
           }
         );
-      } catch {
-        setError("Kamera açılamadı. İzinleri kontrol edin.");
+      } catch (err) {
+        console.error("Scanner Error:", err);
+        setError("Kamera açılamadı. Lütfen kamera izinlerini kontrol edin.");
         setIsScanning(false);
       }
-    }, 100);
+    }, 200);
   };
 
   const stopScanner = async () => {

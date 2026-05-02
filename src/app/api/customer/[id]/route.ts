@@ -7,19 +7,8 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    let customer = db.getCustomer(id);
+    const customer = db.ensureCustomer(id);
     const campaign = db.getCampaign();
-    
-    // If not found on backend (because it's in-memory MVP and server restarted),
-    // we return a zero-stamp customer object to make the frontend robust.
-    if (!customer) {
-      customer = {
-        id,
-        stamps: 0,
-        lastStampAt: null,
-        createdAt: Date.now()
-      };
-    }
 
     return NextResponse.json({
       success: true,

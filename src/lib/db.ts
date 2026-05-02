@@ -62,6 +62,20 @@ export const db = {
     return newCustomer;
   },
 
+  ensureCustomer: (id: string): Customer => {
+    let customer = customers.find(c => c.id === id);
+    if (!customer) {
+      customer = {
+        id,
+        stamps: 0,
+        lastStampAt: null,
+        createdAt: Date.now(),
+      };
+      customers.push(customer);
+    }
+    return customer;
+  },
+
   updateCustomerPhone: (customerId: string, phone: string) => {
     const customer = customers.find(c => c.id === customerId);
     if (!customer) throw new Error('Customer not found');
