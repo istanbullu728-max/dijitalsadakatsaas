@@ -82,10 +82,10 @@ export default function LandingPage(){
             <a href="#ozellikler" style={{color:G,textDecoration:"none",fontSize:"0.875rem",fontWeight:500}}>Özellikler</a>
             <a href="#fiyat" style={{color:G,textDecoration:"none",fontSize:"0.875rem",fontWeight:500}}>Fiyat</a>
             <a href="/login" style={{color:G,textDecoration:"none",fontSize:"0.875rem",fontWeight:500}}>Giriş</a>
-            <a href="/card" style={{padding:"0.45rem 1.1rem",borderRadius:999,background:`linear-gradient(135deg,${I},${P})`,color:"white",textDecoration:"none",fontSize:"0.85rem",fontWeight:700,boxShadow:"0 4px 12px rgba(99,102,241,0.35)"}}>Ücretsiz Dene</a>
+            <a href="/login" style={{padding:"0.45rem 1.1rem",borderRadius:999,background:`linear-gradient(135deg,${I},${P})`,color:"white",textDecoration:"none",fontSize:"0.85rem",fontWeight:700,boxShadow:"0 4px 12px rgba(99,102,241,0.35)"}}>Ücretsiz Dene</a>
           </div>
           {/* Mobile nav CTA only */}
-          <a href="/card" className="landing-mobile-btn" style={{display:"none",padding:"0.4rem 1rem",borderRadius:999,background:`linear-gradient(135deg,${I},${P})`,color:"white",textDecoration:"none",fontSize:"0.8rem",fontWeight:700}}>Dene</a>
+          <a href="/login" className="landing-mobile-btn" style={{display:"none",padding:"0.4rem 1rem",borderRadius:999,background:`linear-gradient(135deg,${I},${P})`,color:"white",textDecoration:"none",fontSize:"0.8rem",fontWeight:700}}>Dene</a>
         </div>
       </nav>
 
@@ -102,7 +102,7 @@ export default function LandingPage(){
               </h1>
               <p style={{fontSize:"1.05rem",color:G,lineHeight:1.75,margin:"0 0 2rem",maxWidth:460}}>QR tabanlı dijital sadakat sistemi ile tekrar satışlarınızı artırın. Kağıt kart yok. Uygulama yok.</p>
               <div className="landing-ctas" style={{display:"flex",gap:"0.75rem",flexWrap:"wrap",marginBottom:"1.75rem"}}>
-                <a href="/card" style={{padding:"0.875rem 1.75rem",borderRadius:12,background:`linear-gradient(135deg,${I},${P})`,color:"white",textDecoration:"none",fontSize:"0.95rem",fontWeight:700,boxShadow:"0 8px 24px rgba(99,102,241,0.4)"}}>Ücretsiz Demo Dene →</a>
+                <a href="/login" style={{padding:"0.875rem 1.75rem",borderRadius:12,background:`linear-gradient(135deg,${I},${P})`,color:"white",textDecoration:"none",fontSize:"0.95rem",fontWeight:700,boxShadow:"0 8px 24px rgba(99,102,241,0.4)"}}>Ücretsiz Demo Dene →</a>
                 <a href="#nasil" style={{padding:"0.875rem 1.5rem",borderRadius:12,border:`1.5px solid ${B}`,color:D,textDecoration:"none",fontSize:"0.95rem",fontWeight:600}}>Nasıl Çalışır?</a>
               </div>
               <div className="landing-trust-items" style={{display:"flex",gap:"1.25rem",flexWrap:"wrap"}}>
@@ -218,7 +218,7 @@ export default function LandingPage(){
                 <div key={f} style={{fontSize:"0.875rem",color:D,fontWeight:500}}>{f}</div>
               ))}
             </div>
-            <a href="/card" style={{display:"block",padding:"0.9rem",borderRadius:12,background:`linear-gradient(135deg,${I},${P})`,color:"white",textDecoration:"none",fontWeight:700,fontSize:"0.95rem",boxShadow:"0 8px 20px rgba(99,102,241,0.4)",textAlign:"center"}}>Ücretsiz Başla →</a>
+            <a href="/login" style={{display:"block",padding:"0.9rem",borderRadius:12,background:`linear-gradient(135deg,${I},${P})`,color:"white",textDecoration:"none",fontWeight:700,fontSize:"0.95rem",boxShadow:"0 8px 20px rgba(99,102,241,0.4)",textAlign:"center"}}>Ücretsiz Başla →</a>
           </div>
         </div>
       </section>
@@ -251,7 +251,7 @@ export default function LandingPage(){
             <span style={{background:`linear-gradient(135deg,${I},${P})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>bugün başlayın.</span>
           </h2>
           <p style={{color:"rgba(255,255,255,0.55)",fontSize:"1rem",marginBottom:"2rem"}}>7 gün boyunca ücretsiz deneyin. Kart gerekmez.</p>
-          <a href="/card" style={{display:"inline-block",padding:"1rem 2.5rem",borderRadius:14,background:`linear-gradient(135deg,${I},${P})`,color:"white",textDecoration:"none",fontWeight:700,fontSize:"1.05rem",boxShadow:"0 8px 24px rgba(99,102,241,0.5)"}}>Ücretsiz Başla →</a>
+          <a href="/login" style={{display:"inline-block",padding:"1rem 2.5rem",borderRadius:14,background:`linear-gradient(135deg,${I},${P})`,color:"white",textDecoration:"none",fontWeight:700,fontSize:"1.05rem",boxShadow:"0 8px 24px rgba(99,102,241,0.5)"}}>Ücretsiz Başla →</a>
         </div>
       </section>
 
