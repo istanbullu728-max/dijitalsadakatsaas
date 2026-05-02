@@ -218,29 +218,29 @@ export default function CustomerCard({
           }} />
 
           {/* Header */}
-          <div style={{ position: "relative", zIndex: 3, display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem", transform: "translateZ(20px)" }}>
+          <div style={{ position: "relative", zIndex: 3, display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem", transform: "translateZ(20px)" }}>
             <div style={{ 
-              width: 28, height: 28, borderRadius: "6px", background: "rgba(255,255,255,0.1)", 
+              width: 24, height: 24, borderRadius: "5px", background: "rgba(255,255,255,0.1)", 
               border: "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", backdropFilter: "blur(4px)" 
             }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              {logo ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <span style={{fontSize:"0.6rem",fontWeight:900}}>{initials}</span>}
+              {logo ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <span style={{fontSize:"0.5rem",fontWeight:900}}>{initials}</span>}
             </div>
-            <div style={{fontSize:"1rem",fontWeight:900,letterSpacing:"-0.01em"}}>{businessName}</div>
+            <div style={{fontSize:"0.85rem",fontWeight:900,letterSpacing:"-0.01em"}}>{businessName}</div>
           </div>
 
           {/* User Name */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(30px)", marginBottom: "0.5rem" }}>
-            <div style={{fontSize:"1.4rem",fontWeight:900,letterSpacing:"-0.02em"}}>{data?.name?.toUpperCase() || shortId}</div>
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(30px)", marginBottom: "0.25rem" }}>
+            <div style={{fontSize:"1.1rem",fontWeight:900,letterSpacing:"-0.02em"}}>{data?.name?.toUpperCase() || shortId}</div>
           </div>
 
-          {/* Stamps Grid - Fixed sizing to prevent overflow */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(40px)", marginBottom: "auto" }}>
+          {/* Stamps Grid - Optimized for absolute fit */}
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(40px)", flex: 1, display: "flex", alignItems: "center" }}>
              <div style={{ 
                display: "grid", 
                gridTemplateColumns: "repeat(5, 1fr)", 
-               gap: "8px",
-               maxWidth: "100%"
+               gap: "6px",
+               width: "100%"
              }}>
                {Array.from({length: Math.min(required, 10)}).map((_,i)=>(
                  <div key={i} style={{
@@ -250,10 +250,10 @@ export default function CustomerCard({
                    background: i < stamps ? "white" : "rgba(255,255,255,0.08)",
                    border: i < stamps ? "none" : "1px solid rgba(255,255,255,0.15)",
                    display: "flex", alignItems: "center", justifyContent: "center",
-                   transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                   transition: "all 0.3s ease",
                  }}>
                    {i < stamps && (
-                     <div style={{ width: "40%", height: "40%", background: cardColor, borderRadius: "50%" }} />
+                     <div style={{ width: "45%", height: "45%", background: cardColor, borderRadius: "50%" }} />
                    )}
                  </div>
                ))}
@@ -261,9 +261,9 @@ export default function CustomerCard({
           </div>
 
           {/* Campaign Info */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(25px)", marginTop: "0.75rem", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "0.5rem" }}>
-            <div style={{fontSize:"0.7rem",fontWeight:800,color:isReady ? "#4ADE80" : "white", textTransform: "uppercase"}}>
-              {isReady ? "🎁 ÖDÜLÜNÜZ HAZIR!" : gift}
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(25px)", marginTop: "0.25rem", borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: "0.4rem" }}>
+            <div style={{fontSize:"0.65rem",fontWeight:900,color:isReady ? "#4ADE80" : "white", textTransform: "uppercase", letterSpacing: "0.02em"}}>
+              {isReady ? "🎁 ÖDÜLÜNÜZ HAZIR!" : `${required} DAMGADA ${gift.toUpperCase()}`}
             </div>
           </div>
         </div>
