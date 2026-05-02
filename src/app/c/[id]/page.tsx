@@ -166,14 +166,6 @@ export default function CustomerCard({
               transform:`rotate(${(((i * 27) % 100) / 100)*360}deg) translateY(-${100+(((i * 41) % 100) / 100)*150}px)`
             }}/>
           ))}
-          <style>{`
-            ${Array.from({length:12}).map((_,i) => {
-               const r1 = ((i * 17) % 100) / 100;
-               const r2 = ((i * 31) % 100) / 100;
-               return "@keyframes confettiFly" + i + " { 0% { opacity: 1; transform: translate(0,0) scale(0); } 100% { opacity: 0; transform: translate(" + ((r1-0.5)*300) + "px, " + ((r2-0.5)*300) + "px) scale(1.5) rotate(360deg); } }";
-            }).join('\\n')}
-            @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
-          `}</style>
         </div>
       )}
 
@@ -202,7 +194,7 @@ export default function CustomerCard({
               ? "0 40px 80px -20px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.3)"
               : "0 25px 50px -12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.2)",
             overflow: "hidden", display: "flex", flexDirection: "column",
-            padding: "1.25rem", color: "white",
+            padding: "1.25rem 1.25rem 0.75rem", color: "white",
             marginBottom: "2rem",
             border: "1px solid rgba(255,255,255,0.1)"
           }}
@@ -212,13 +204,18 @@ export default function CustomerCard({
             position: "absolute", inset: 0, pointerEvents: "none", zIndex: 5,
             background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,${glare.opacity}), transparent 60%)`,
           }} />
-          <div style={{
-            position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1, opacity: 0.04, mixBlendMode: "overlay",
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`
-          }} />
+          <style>{`
+            @keyframes stampIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }
+            @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+            ${Array.from({length:12}).map((_,i) => {
+               const r1 = ((i * 17) % 100) / 100;
+               const r2 = ((i * 31) % 100) / 100;
+               return "@keyframes confettiFly" + i + " { 0% { opacity: 1; transform: translate(0,0) scale(0); } 100% { opacity: 0; transform: translate(" + ((r1-0.5)*300) + "px, " + ((r2-0.5)*300) + "px) scale(1.5) rotate(360deg); } }";
+            }).join('\\n')}
+          `}</style>
 
           {/* Header */}
-          <div style={{ position: "relative", zIndex: 3, display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem", transform: "translateZ(20px)" }}>
+          <div style={{ position: "relative", zIndex: 3, display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "auto", transform: "translateZ(20px)" }}>
             <div style={{ 
               width: 24, height: 24, borderRadius: "5px", background: "rgba(255,255,255,0.1)", 
               border: "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", backdropFilter: "blur(4px)" 
@@ -229,17 +226,12 @@ export default function CustomerCard({
             <div style={{fontSize:"0.85rem",fontWeight:900,letterSpacing:"-0.01em"}}>{businessName}</div>
           </div>
 
-          {/* User Name */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(30px)", marginBottom: "0.25rem" }}>
-            <div style={{fontSize:"1.1rem",fontWeight:900,letterSpacing:"-0.02em"}}>{data?.name?.toUpperCase() || shortId}</div>
-          </div>
-
           {/* Stamps Grid - Optimized for absolute fit */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(40px)", flex: 1, display: "flex", alignItems: "center" }}>
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(40px)", margin: "0.5rem 0" }}>
              <div style={{ 
                display: "grid", 
                gridTemplateColumns: "repeat(5, 1fr)", 
-               gap: "6px",
+               gap: "8px",
                width: "100%"
              }}>
                {Array.from({length: Math.min(required, 10)}).map((_,i)=>(
@@ -250,7 +242,7 @@ export default function CustomerCard({
                    background: i < stamps ? "white" : "rgba(255,255,255,0.08)",
                    border: i < stamps ? "none" : "1px solid rgba(255,255,255,0.15)",
                    display: "flex", alignItems: "center", justifyContent: "center",
-                   transition: "all 0.3s ease",
+                   animation: i === stamps - 1 ? "stampIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards" : "none"
                  }}>
                    {i < stamps && (
                      <div style={{ width: "45%", height: "45%", background: cardColor, borderRadius: "50%" }} />
@@ -260,10 +252,12 @@ export default function CustomerCard({
              </div>
           </div>
 
-          {/* Campaign Info */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(25px)", marginTop: "0.25rem", borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: "0.4rem" }}>
-            <div style={{fontSize:"0.65rem",fontWeight:900,color:isReady ? "#4ADE80" : "white", textTransform: "uppercase", letterSpacing: "0.02em"}}>
-              {isReady ? "🎁 ÖDÜLÜNÜZ HAZIR!" : `${required} DAMGADA ${gift.toUpperCase()}`}
+          {/* Campaign Info - Precise position to avoid cut-off */}
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(25px)", marginTop: "auto" }}>
+            <div style={{borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: "0.5rem", marginBottom: "0.25rem"}}>
+              <div style={{fontSize:"0.7rem",fontWeight:900,color:isReady ? "#4ADE80" : "white", textTransform: "uppercase", letterSpacing: "0.02em"}}>
+                {isReady ? "🎁 ÖDÜLÜNÜZ HAZIR!" : `${required} DAMGAYA ${gift.toUpperCase()}`}
+              </div>
             </div>
           </div>
         </div>
@@ -279,7 +273,7 @@ export default function CustomerCard({
           <div style={{
             background: "white", 
             padding: "0.75rem", 
-            borderRadius: "16px", 
+            borderRadius: "20px", 
             boxShadow: "0 10px 30px rgba(0,0,0,0.3)"
           }}>
             {id && <QRCodeSVG value={id} size={150} level="H" fgColor="#000000" bgColor="#FFFFFF" includeMargin={false} />}
