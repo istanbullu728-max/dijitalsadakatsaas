@@ -181,7 +181,7 @@ export default function CustomerCard({
       <div style={{ ...styles.ambientGlow, background: `radial-gradient(ellipse 70% 60% at 50% 30%, ${cardColor}55 0%, transparent 70%)` }} />
 
       <div style={{ perspective: "1500px", width: "100%", maxWidth: "380px", margin: "0 auto", zIndex: 10, padding: "0 1rem" }}>
-        {/* ── THE CARD ── */}
+        {/* ── THE CARD (Premium 3D Credit Card Feel) ── */}
         <div 
           ref={cardRef}
           onMouseMove={handleMouseMove}
@@ -190,8 +190,8 @@ export default function CustomerCard({
           onTouchEnd={handleMouseLeave}
           style={{
             width: "100%", 
-            minHeight: "220px",
-            borderRadius: "24px", position: "relative",
+            aspectRatio: "1.6 / 1",
+            borderRadius: "20px", position: "relative",
             transformStyle: "preserve-3d",
             transform: mounted 
               ? `translateY(0) scale(1) rotateX(${rotate.x || -6}deg) rotateY(${rotate.y || 4}deg)` 
@@ -202,8 +202,9 @@ export default function CustomerCard({
               ? "0 40px 80px -20px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.3)"
               : "0 25px 50px -12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.2)",
             overflow: "hidden", display: "flex", flexDirection: "column",
-            padding: "1.5rem", color: "white",
-            marginBottom: "2rem"
+            padding: "1.25rem", color: "white",
+            marginBottom: "2.5rem",
+            border: "1px solid rgba(255,255,255,0.1)"
           }}
         >
           {/* Glare & Texture */}
@@ -217,50 +218,45 @@ export default function CustomerCard({
           }} />
 
           {/* Header */}
-          <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", transform: "translateZ(20px)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ position: "relative", zIndex: 3, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem", transform: "translateZ(20px)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <div style={{ 
-                width: 38, height: 38, borderRadius: "10px", background: "rgba(255,255,255,0.1)", 
+                width: 32, height: 32, borderRadius: "8px", background: "rgba(255,255,255,0.1)", 
                 border: "1px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", backdropFilter: "blur(4px)" 
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {logo ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <span style={{fontSize:"0.8rem",fontWeight:900}}>{initials}</span>}
+                {logo ? <img src={logo} alt="logo" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <span style={{fontSize:"0.7rem",fontWeight:900}}>{initials}</span>}
               </div>
-              <div style={{fontSize:"1rem",fontWeight:800,letterSpacing:"-0.01em"}}>{businessName}</div>
+              <div style={{fontSize:"0.9rem",fontWeight:800,letterSpacing:"-0.01em"}}>{businessName}</div>
             </div>
-            <div style={{fontSize:"0.55rem",fontWeight:700,color:"rgba(255,255,255,0.5)",letterSpacing:"0.15em",textTransform:"uppercase"}}>PREMIUM</div>
+            <div style={{fontSize:"0.5rem",fontWeight:700,color:"rgba(255,255,255,0.5)",letterSpacing:"0.15em",textTransform:"uppercase"}}>PLATINUM CARD</div>
           </div>
 
-          {/* User & Info */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(30px)", marginBottom: "1.5rem" }}>
-            <div style={{fontSize:"0.6rem",color:"rgba(255,255,255,0.4)",fontWeight:600,letterSpacing:"0.05em",marginBottom:"0.1rem"}}>MÜŞTERİ</div>
-            <div style={{fontSize:"1.4rem",fontWeight:900,letterSpacing:"-0.02em"}}>{data?.name || shortId}</div>
+          {/* User Info */}
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(30px)", marginBottom: "1rem" }}>
+            <div style={{fontSize:"0.5rem",color:"rgba(255,255,255,0.4)",fontWeight:600,letterSpacing:"0.05em",marginBottom:"0.1rem"}}>CARD HOLDER</div>
+            <div style={{fontSize:"1.2rem",fontWeight:900,letterSpacing:"-0.02em",fontFamily:"monospace"}}>{data?.name?.toUpperCase() || shortId}</div>
           </div>
 
-          {/* Stamps Grid */}
-          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(40px)", marginBottom: "1rem" }}>
-             <div style={{fontSize:"0.6rem",color:"rgba(255,255,255,0.4)",fontWeight:700,letterSpacing:"0.05em",marginBottom:"0.75rem"}}>İLERLEME: {stamps}/{required}</div>
+          {/* Stamps Grid - Optimized for Credit Card Shape */}
+          <div style={{ position: "relative", zIndex: 3, transform: "translateZ(40px)", marginBottom: "0.75rem" }}>
              <div style={{ 
                display: "grid", 
                gridTemplateColumns: "repeat(5, 1fr)", 
-               gap: "10px",
+               gap: "8px",
                maxWidth: "100%"
              }}>
-               {Array.from({length: required}).map((_,i)=>(
+               {Array.from({length: Math.min(required, 10)}).map((_,i)=>(
                  <div key={i} style={{
                    aspectRatio: "1", 
                    borderRadius: "50%",
-                   background: i < stamps ? "white" : "rgba(255,255,255,0.08)",
-                   border: i < stamps ? "none" : "1px solid rgba(255,255,255,0.15)",
+                   background: i < stamps ? "white" : "rgba(255,255,255,0.06)",
+                   border: i < stamps ? "none" : "1px solid rgba(255,255,255,0.1)",
                    display: "flex", alignItems: "center", justifyContent: "center",
                    transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                   transform: i < stamps ? "scale(1.05)" : "scale(1)",
-                   boxShadow: i < stamps ? `0 0 12px rgba(255,255,255,0.4)` : "none"
                  }}>
                    {i < stamps && (
-                     <svg width="12" height="12" viewBox="0 0 24 24" fill={cardColor} style={{filter:"drop-shadow(0 1px 1px rgba(0,0,0,0.1))"}}>
-                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z" />
-                     </svg>
+                     <div style={{ width: "50%", height: "50%", background: cardColor, borderRadius: "50%", boxShadow: "0 0 8px rgba(0,0,0,0.2)" }} />
                    )}
                  </div>
                ))}
@@ -270,42 +266,43 @@ export default function CustomerCard({
           {/* Reward Info */}
           <div style={{ 
             position: "relative", zIndex: 3, transform: "translateZ(25px)", 
-            marginTop: "auto", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "1rem",
-            display: "flex", justifyContent: "space-between", alignItems: "center"
+            marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "flex-end"
           }}>
             <div>
-              <div style={{fontSize:"0.55rem",color:"rgba(255,255,255,0.4)",fontWeight:600,letterSpacing:"0.05em"}}>ÖDÜL</div>
-              <div style={{fontSize:"0.8rem",fontWeight:800,color:isReady ? "#4ADE80" : "white"}}>
-                {isReady ? "🎁 ÖDÜLÜNÜZ HAZIR!" : gift.toUpperCase()}
+              <div style={{fontSize:"0.5rem",color:"rgba(255,255,255,0.4)",fontWeight:600,letterSpacing:"0.05em"}}>STATUS</div>
+              <div style={{fontSize:"0.75rem",fontWeight:800,color:isReady ? "#4ADE80" : "white"}}>
+                {isReady ? "🎁 REWARD READY" : gift.toUpperCase()}
               </div>
             </div>
-            <div style={{fontSize:"0.7rem",fontWeight:700,opacity:0.6,fontFamily:"monospace"}}>#{shortId}</div>
+            <div style={{fontSize:"0.6rem",fontWeight:700,opacity:0.4,fontFamily:"monospace"}}>VALID THRU 12/29</div>
           </div>
         </div>
 
-        {/* ── QR CODE AREA (BELOW CARD) ── */}
+        {/* ── QR CODE AREA (Minimalist Glassmorphism) ── */}
         <div style={{
-          background: "rgba(255,255,255,0.95)",
+          background: "rgba(255,255,255,0.05)",
+          backdropFilter: "blur(20px)",
           borderRadius: "24px",
-          padding: "1.5rem",
+          padding: "1.25rem",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: "1rem",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+          gap: "0.75rem",
+          border: "1px solid rgba(255,255,255,0.1)",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
           position: "relative",
           zIndex: 20
         }}>
-          <div style={{fontSize:"0.7rem",fontWeight:800,color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase"}}>KASİYER İÇİN OKUTUN</div>
+          <div style={{fontSize:"0.65rem",fontWeight:800,color:"rgba(255,255,255,0.4)",letterSpacing:"0.15em",textTransform:"uppercase"}}>SCAN FOR STAMP</div>
           <div style={{
             background: "white", 
-            padding: "1rem", 
-            borderRadius: "16px", 
-            boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.05)"
+            padding: "0.75rem", 
+            borderRadius: "12px", 
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
           }}>
-            {id && <QRCodeSVG value={id} size={160} level="H" fgColor="#000000" bgColor="#FFFFFF" includeMargin={false} />}
+            {id && <QRCodeSVG value={id} size={140} level="H" fgColor="#000000" bgColor="#FFFFFF" includeMargin={false} />}
           </div>
-          <div style={{fontSize:"0.6rem",color:"#94A3B8",fontWeight:600}}>Dijital Müşteri Kimliği</div>
+          <div style={{fontSize:"0.6rem",color:"rgba(255,255,255,0.3)",fontWeight:600}}>Unique Member ID: {shortId}</div>
         </div>
       </div>
 
@@ -318,7 +315,7 @@ export default function CustomerCard({
         }}
       >
         <div style={styles.hintDot} />
-        Canlı güncelleniyor
+        Live Sync Active
       </div>
     </div>
   );
